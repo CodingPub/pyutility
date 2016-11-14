@@ -11,10 +11,14 @@ def singleton(cls, *args, **kw):
     _instances = {}
     _lock = threading.Lock()
 
-    def _singleton():
+    def _singleton(*args, **kw):
         _lock.acquire()
 
         if cls not in _instances:
+            print(cls)
+            print(args)
+            print(kw)
+
             _instances[cls] = cls(*args, **kw)
 
         _lock.release()
@@ -27,11 +31,13 @@ if __name__ == '__main__':
 
     @singleton
     class ClassA(object):
-        pass
+        def __init__(self, arg1, t=None):
+            # super(ClassA, self).__init__()
+            self.arg1 = arg1
+            self.t = t
+            pass
 
+    print(ClassA(12, t='a'))
     print(ClassA())
-    print(ClassA())
-
-
-# <__main__.ClassA object at 0x101340550>
-# <__main__.ClassA object at 0x101340550>
+    print(ClassA().arg1)
+    print(ClassA().t)
