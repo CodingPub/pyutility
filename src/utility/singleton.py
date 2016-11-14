@@ -15,10 +15,6 @@ def singleton(cls, *args, **kw):
         _lock.acquire()
 
         if cls not in _instances:
-            print(cls)
-            print(args)
-            print(kw)
-
             _instances[cls] = cls(*args, **kw)
 
         _lock.release()

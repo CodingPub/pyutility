@@ -4,7 +4,7 @@ import tempfile
 from common import *
 
 
-class TestCache(unittest.TestCase):
+class TestCommon(unittest.TestCase):
     def setUp(self):
         pass
 

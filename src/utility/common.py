@@ -18,6 +18,7 @@ __author__ = 'Lin Xiaobin'
 __all__ = ['isDebug', 'setDebug',
            'cmddir', 'joinPaths',
            'createdir', 'createdirs', 'remove',
+           'isfile', 'isdir',
            'listdir',
            'readfile', 'writefile', 'replacefile',
            'requestString', 'requestData',
@@ -72,6 +73,18 @@ def remove(path):
         shutil.rmtree(path)
     elif os.path.isfile:
         os.remove(path)
+
+
+def isfile(path):
+    if path:
+        return os.path.isfile(path)
+    return False
+
+
+def isdir(path):
+    if path:
+        return os.path.isdir(path)
+    return False
 
 
 def matchRex(string, rex):
