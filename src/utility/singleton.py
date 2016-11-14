@@ -4,6 +4,9 @@
 import threading
 
 
+__all__ = ['singleton']
+
+
 def singleton(cls, *args, **kw):
     _instances = {}
     _lock = threading.Lock()

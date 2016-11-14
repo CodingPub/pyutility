@@ -7,6 +7,7 @@ import logging.handlers
 import sys
 import os
 
+__all__ = ['logger']
 
 dirRoot = os.path.split(sys.argv[0])[0]
 
