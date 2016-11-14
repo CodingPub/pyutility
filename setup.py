@@ -6,4 +6,4 @@ setup(name='utility',
       author='LinXiaobin',
       author_email='linxiaobin0605@gmail.com',
       url='http://blog.liuts.com',
-      py_modules=['__init__', 'logger'])
+      py_modules=['__init__', 'logger', 'singleton'])
