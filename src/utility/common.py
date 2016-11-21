@@ -10,6 +10,7 @@ import json
 import threading
 import http.cookiejar
 import urllib.request
+import re
 from utility.logger import *
 from lxml import etree
 
@@ -71,7 +72,7 @@ def createdirs(dirs):
 def remove(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
-    elif os.path.isfile:
+    elif os.path.isfile(path):
         os.remove(path)
 
 
@@ -87,18 +88,36 @@ def isdir(path):
     return False
 
 
-def matchRex(string, rex):
-    pass
+def rexMatching(pattern, string):
+    if string and pattern:
+        return re.match(pattern, string, flags=0)
+    else:
+        return None
 
 
-def listdir(directory, fileExt=None):
+def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False):
     result = []
     if directory and os.path.isdir(directory):
         files = os.listdir(directory)
+
         for file in files:
             name, ext = os.path.splitext(file)
-            # print(name, ext)
-            if fileExt and ext and fileExt == ext:
+            absPath = os.path.abspath(joinPaths(directory, file))
+            isdir = os.path.isdir(absPath)
+            if justFile and isdir:
+                continue
+            if justDir and not isdir:
+                continue
+
+            add = True
+            if nameRex and extRex:
+                add = rexMatching(nameRex, name) and rexMatching(extRex, ext)
+            elif nameRex:
+                add = rexMatching(nameRex, name)
+            elif extRex:
+                add = rexMatching(extRex, ext)
+
+            if add:
                 result.append(file)
 
     return result
@@ -121,9 +140,11 @@ def writefile(file, string, encoding='utf-8'):
 
 
 def replacefile(src, dst):
-    if os.path.isfile(src):
-        if os.path.isfile(dst):
-            os.remove(dst)
+    if os.path.isdir(src):
+        remove(dst)
+        shutil.copytree(src, dst)
+    elif os.path.isfile(src):
+        remove(dst)
         shutil.copyfile(src, dst)
 
 
@@ -159,7 +180,7 @@ def requestData(url, headers=None, data=None, method=None, cache=False):
         with urllib.request.urlopen(req) as f:
             response = f.read()
     except Exception as e:
-        print('request error:', e)
+        logger.warning('request error: %s' % e)
 
     if response and (cache):
         # if isDebug():
@@ -289,5 +310,8 @@ def runMethod(target, array, begin, step):
 
 
 if __name__ == '__main__':
+
+    url = 'http://api.zhuishushenqi.com/book/fuzzy-search?query=斗破苍穹'
+    content = requestString(url, headers=None, data=None, method=None, encoding=None, cache=True)
 
     pass
