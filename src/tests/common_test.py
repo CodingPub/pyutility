@@ -1,7 +1,7 @@
 import unittest
 import os
 import tempfile
-from common import *
+from utility.common import *
 
 
 class TestCommon(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestCommon(unittest.TestCase):
         self.assertIsNotNone(path, msg='get cmd directory error')
 
     def testlistdir(self):
-        arr = listdir('.', fileExt='.py')
+        arr = listdir('.', extRex='.py')
         msg = 'list directory error'
         self.assertIsNotNone(arr, msg=msg)
         self.assertGreater(len(arr), 0, msg=msg)

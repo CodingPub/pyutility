@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 from utility import *
-from dbcache import *
+from utility.dbcache import *
 
 
 class TestDBCache(unittest.TestCase):
