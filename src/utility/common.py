@@ -14,6 +14,7 @@ import re
 from utility.logger import *
 from lxml import etree
 
+
 __author__ = 'Lin Xiaobin'
 
 __all__ = ['isDebug', 'setDebug',
@@ -24,7 +25,7 @@ __all__ = ['isDebug', 'setDebug',
            'readfile', 'writefile', 'replacefile',
            'requestString', 'requestData',
            'htmlElements', 'firstxpath',
-           'str2Json',
+           'str2Json', 'json2Str',
            'initialCookie', 'revertCookie', 'saveCookie',
            'systemCmd',
            'multiRun']
@@ -235,6 +236,18 @@ def str2Json(string):
     return result
 
 
+def json2Str(jsonStr):
+    result = None
+    if jsonStr:
+        try:
+            result = json.dumps(jsonStr)
+        except Exception as e:
+            if isDebug():
+                logger.debug('json2Str:%s' % e)
+
+    return result
+
+
 def systemCmd(cmd, directory=None, log=False):
     if directory is not None:
         cmd = 'cd %s;' % directory + '\n' + cmd
@@ -311,7 +324,7 @@ def runMethod(target, array, begin, step):
 
 if __name__ == '__main__':
 
-    url = 'http://api.zhuishushenqi.com/book/fuzzy-search?query=斗破苍穹'
-    content = requestString(url, headers=None, data=None, method=None, encoding=None, cache=True)
+    print(json2Str({'2': 2}))
+    print(str2Json('{"2": 2}'))
 
     pass
