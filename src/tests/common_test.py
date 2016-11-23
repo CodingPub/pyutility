@@ -1,3 +1,4 @@
+import addpath
 import unittest
 import os
 import tempfile

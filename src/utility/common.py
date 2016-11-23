@@ -18,6 +18,7 @@ from lxml import etree
 __author__ = 'Lin Xiaobin'
 
 __all__ = ['isDebug', 'setDebug',
+           'addsyspath',
            'cmddir', 'joinPaths',
            'createdir', 'createdirs', 'remove',
            'isfile', 'isdir',
@@ -41,6 +42,13 @@ def isDebug():
 def setDebug(debug):
     global DEBUG
     DEBUG = debug
+
+
+def addsyspath(path):
+    if os.path.isdir(path):
+        sys.path.insert(0, path)
+    elif path:
+        sys.path.insert(0, os.path.split(path)[0])
 
 
 def cmddir():
@@ -323,8 +331,9 @@ def runMethod(target, array, begin, step):
 
 
 if __name__ == '__main__':
-
-    print(json2Str({'2': 2}))
-    print(str2Json('{"2": 2}'))
+    print(__file__)
+    print(sys.path)
+    addsyspath(__file__)
+    print(sys.path)
 
     pass
