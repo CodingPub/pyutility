@@ -4,3 +4,4 @@ dist
 build/lib
 log
 .DS_Store
+install.txt
