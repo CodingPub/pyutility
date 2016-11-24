@@ -4,9 +4,10 @@
 import threading
 
 
-__all__ = ['singleton']
+__all__ = ['singleton', 'Singleton']
 
 
+# 装饰器方式，不能继续继承单例
 def singleton(cls, *args, **kw):
     _instances = {}
     _lock = threading.Lock()
@@ -23,17 +24,21 @@ def singleton(cls, *args, **kw):
     return _singleton
 
 
+# metaclass 方式，可继承单例
+# 例如：
+# class ClassA(object, metaclass=Singleton):
+# class ClassB(ClassA)
+class Singleton(type):
+    def __init__(cls, name, bases, dict):
+        super(Singleton, cls).__init__(name, bases, dict)
+        cls._instance = None
+
+    def __call__(cls, *args, **kw):
+        if cls._instance is None:
+            cls._instance = super(Singleton, cls).__call__(*args, **kw)
+        return cls._instance
+
+
 if __name__ == '__main__':
 
-    @singleton
-    class ClassA(object):
-        def __init__(self, arg1, t=None):
-            # super(ClassA, self).__init__()
-            self.arg1 = arg1
-            self.t = t
-            pass
-
-    print(ClassA(12, t='a'))
-    print(ClassA())
-    print(ClassA().arg1)
-    print(ClassA().t)
+    pass

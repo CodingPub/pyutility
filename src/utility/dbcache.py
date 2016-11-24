@@ -11,8 +11,7 @@ __author__ = 'Lin Xiaobin'
 __all__ = ['DBCache']
 
 
-@singleton
-class DBCache(object):
+class DBCache(object, metaclass=Singleton):
 
     def __init__(self, dbPath):
         self._dbLock = threading.Lock()
@@ -22,6 +21,9 @@ class DBCache(object):
 
     def backup(self):
         replacefile(self._dbPath, self._dbPath + '.bak')
+
+    def commit(self):
+        self._executeSQL(';', isQueury=False, commit=True)
 
     def vacuum(self):
         self._executeSQL('vacuum', isQueury=False, commit=True)
@@ -63,3 +65,7 @@ class DBCache(object):
             return values
         else:
             return rowCount
+
+
+if __name__ == '__main__':
+    pass

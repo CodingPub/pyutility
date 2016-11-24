@@ -56,9 +56,9 @@ class TestCommon(unittest.TestCase):
             resultSet.add(arr[idx])
             return True
 
-        l = list(range(100))
-        s = set(l)
-        multiRun(foo, l, 2, 'Start...', 'Finish...')
+        arr = list(range(100))
+        s = set(arr)
+        multiRun(foo, arr, 2, 'Start...', 'Finish...')
         self.assertEqual(s, resultSet, msg='multi run error')
 
 
