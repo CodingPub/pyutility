@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from common import *
-from logger import *
+from utility.common import *
+from utility.logger import *
 import os
 
 __author__ = 'Lin Xiaobin'
