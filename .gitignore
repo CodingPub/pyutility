@@ -5,3 +5,5 @@ build/lib
 log
 .DS_Store
 install.txt
+src/utility/build/
+*.spec

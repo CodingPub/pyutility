@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utility.common import *
-from utility.logger import *
+from common import *
+from logger import *
 import os
 
 __author__ = 'Lin Xiaobin'
@@ -29,7 +29,7 @@ class Package(object):
     def buildPys(self):
         for path in self.files:
             f1 = os.path.splitext(joinPaths(self.distdir, splitPath(path)[-1]))[0]
-            f2 = f1 + '.ext'
+            f2 = f1 + '.exe'
             remove(f1)
             remove(f2)
 

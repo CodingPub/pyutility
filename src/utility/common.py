@@ -270,7 +270,7 @@ def json2Str(jsonStr):
 
 def systemCmd(cmd, directory=None, log=False):
     if directory is not None:
-        cmd = 'cd %s;' % directory + '\n' + cmd
+        os.chdir(directory)
     if isDebug():
         logger.debug(cmd)
 
