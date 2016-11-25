@@ -19,7 +19,7 @@ __author__ = 'Lin Xiaobin'
 
 __all__ = ['isDebug', 'setDebug',
            'addsyspath',
-           'cmddir', 'joinPaths',
+           'cmddir', 'joinPaths', 'splitPath',
            'createdir', 'createdirs', 'remove',
            'isfile', 'isdir',
            'listdir',
@@ -65,6 +65,18 @@ def joinPaths(*paths):
         r = os.path.join(r, paths[i])
 
     return r
+
+
+def splitPath(path, level=1):
+    if path is None or level <= 0:
+        return path
+
+    result = os.path.split(path)
+    curIdx = 1
+    while curIdx < level and result and len(result) == 2:
+        result = os.path.split(result[0])
+        curIdx += 1
+    return result
 
 
 def createdir(directory):
@@ -331,9 +343,9 @@ def runMethod(target, array, begin, step):
 
 
 if __name__ == '__main__':
-    print(__file__)
-    print(sys.path)
-    addsyspath(__file__)
-    print(sys.path)
+    path = cmddir()
+    print(path)
+    d, name = splitPath(path, level=2)
+    print(d, name)
 
     pass
