@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from utility import *
+from utility.common import *
+from utility.logger import *
 import os
 
 __author__ = 'Lin Xiaobin'
+
+__all__ = ['Package']
 
 
 class Package(object):
