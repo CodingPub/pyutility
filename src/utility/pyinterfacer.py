@@ -13,12 +13,12 @@ __author__ = 'Lin Xiaobin'
 
 __all__ = ['requestString', 'requestData',
            'revertCookie', 'saveCookie',
-           'Interfacer']
+           'PyInterfacer']
 
 
-class Interfacer(object):
+class PyInterfacer(object):
     def __init__(self, cookiename=None):
-        super(Interfacer, self).__init__()
+        super(PyInterfacer, self).__init__()
         if cookiename is None:
             self.cookiename = 'cookie_default'
         else:
@@ -99,7 +99,7 @@ class Interfacer(object):
             self.cookiejar.save(self.cookiePath())
 
 
-_interfacer = Interfacer()
+_interfacer = PyInterfacer()
 
 
 def revertCookie():
@@ -123,16 +123,16 @@ def requestData(url, headers=None, data=None, method=None, cache=False):
 
 
 if __name__ == '__main__':
-    i1 = Interfacer('cookie1')
+    i1 = PyInterfacer('cookie1')
     i1.requestData('http://www.baidu.com')
     i1.requestData('https://github.com')
     i1.saveCookie()
 
-    i2 = Interfacer('cookie2')
+    i2 = PyInterfacer('cookie2')
     i2.requestData('http://www.baidu.com')
     i2.saveCookie()
 
-    i3 = Interfacer()
+    i3 = PyInterfacer()
     i3.requestData('http://www.baidu.com')
     i3.saveCookie()
 
