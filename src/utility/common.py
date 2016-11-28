@@ -3,13 +3,9 @@
 
 import os
 import sys
-import tempfile
-import hashlib
 import shutil
 import json
 import threading
-import http.cookiejar
-import urllib.request
 import re
 from utility.logger import *
 from lxml import etree
@@ -24,10 +20,9 @@ __all__ = ['isDebug', 'setDebug',
            'isfile', 'isdir',
            'listdir',
            'readfile', 'writefile', 'replacefile',
-           'requestString', 'requestData',
+           'decodeData',
            'htmlElements', 'firstxpath',
            'str2Json', 'json2Str',
-           'initialCookie', 'revertCookie', 'saveCookie',
            'systemCmd',
            'multiRun']
 
@@ -169,49 +164,6 @@ def replacefile(src, dst):
         shutil.copyfile(src, dst)
 
 
-def requestString(url, headers=None, data=None, method=None, encoding=None, cache=True):
-    data = requestData(url, headers=headers, data=data, method=method, cache=cache)
-    s = None
-    if data:
-        if encoding:
-            s = decodeData(data, encoding=encoding)
-        else:
-            s = decodeData(data, encoding='utf-8')
-            if not s:
-                s = decodeData(data, encoding='gbk')
-    return s
-
-
-def requestData(url, headers=None, data=None, method=None, cache=False):
-    if not headers:
-        headers = {}
-    md5Str = url
-    md5Str = md5Str + urllib.parse.urlencode(headers)
-    cachePath = os.path.join(tempfile.gettempdir(), hashlib.md5(md5Str.encode('utf-8')).hexdigest())
-
-    if cache and os.path.isfile(cachePath):
-        logger.debug('load cache: ' + cachePath + ' url:' + url)
-        with open(cachePath, 'rb') as f:
-            return f.read()
-
-    response = None
-
-    req = urllib.request.Request(url, data=data, headers=headers, origin_req_host=None, unverifiable=False, method=method)
-    try:
-        with urllib.request.urlopen(req) as f:
-            response = f.read()
-    except Exception as e:
-        logger.warning('request error: %s' % e)
-
-    if response and (cache):
-        # if isDebug():
-        #     logger.debug('write cache: ' + cachePath + ' url:' + url)
-        with open(cachePath, 'wb') as f:
-            f.write(response)
-
-    return response
-
-
 def htmlElements(content, xpath):
     if content is None or xpath is None:
         return None
@@ -281,40 +233,6 @@ def systemCmd(cmd, directory=None, log=False):
         return text
     else:
         return os.system(cmd)
-
-
-_cookiejar = None
-
-
-def cookiePath():
-    return os.path.join(tempfile.gettempdir(), 'cookie.txt')
-
-
-def initialCookie():
-    global _cookiejar
-    if _cookiejar is None:
-        path = cookiePath()
-        logger.info('initialCookie' + path)
-        cj = http.cookiejar.MozillaCookieJar()
-        _cookiejar = cj
-        if os.path.isfile(path):
-            cj.load(path)
-
-        hcj = urllib.request.HTTPCookieProcessor(cj)
-        opener = urllib.request.build_opener(hcj)
-        urllib.request.install_opener(opener)
-
-
-def revertCookie():
-    global _cookiejar
-    path = cookiePath()
-    if os.path.isfile(path):
-        _cookiejar.revert(path)
-
-
-def saveCookie():
-    global _cookiejar
-    _cookiejar.save(cookiePath())
 
 
 def multiRun(target, array, threadCount, beginMsg, finishMsg):

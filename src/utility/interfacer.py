@@ -11,7 +11,9 @@ from utility.logger import *
 
 __author__ = 'Lin Xiaobin'
 
-__all__ = ['Interfacer']
+__all__ = ['requestString', 'requestData',
+           'revertCookie', 'saveCookie',
+           'Interfacer']
 
 
 class Interfacer(object):
@@ -95,6 +97,29 @@ class Interfacer(object):
     def saveCookie(self):
         if self.cookiejar is not None:
             self.cookiejar.save(self.cookiePath())
+
+
+_interfacer = Interfacer()
+
+
+def revertCookie():
+    global _interfacer
+    _interfacer.revertCookie()
+
+
+def saveCookie():
+    global _interfacer
+    _interfacer.saveCookie()
+
+
+def requestString(url, headers=None, data=None, method=None, encoding=None, cache=True):
+    global _interfacer
+    return _interfacer.requestString(url, headers=headers, data=data, method=method, encoding=encoding, cache=cache)
+
+
+def requestData(url, headers=None, data=None, method=None, cache=False):
+    global _interfacer
+    return _interfacer.requestData(url, headers=headers, data=data, method=method, cache=cache)
 
 
 if __name__ == '__main__':
