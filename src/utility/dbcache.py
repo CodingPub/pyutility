@@ -48,7 +48,8 @@ class DBCache(object, metaclass=Singleton):
         cmd = 'ALTER TABLE %s ADD COLUMN %s %s' % (table, column, columntype)
         self._updateSQL(cmd, commit=False)
         if default:
-            cmd = 'update wallpaper set %s=%s where %s is null' % (column, default, column)
+            cmd = 'update %s set %s=%s where %s is null' % (table, column, default, column)
+            # print(cmd)
             self._updateSQL(cmd, commit=False)
         self.commit()
 
