@@ -4,6 +4,7 @@
 
 import os
 import tempfile
+import hashlib
 import http.cookiejar
 import urllib.request
 from utility.common import *
