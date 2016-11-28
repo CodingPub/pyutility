@@ -30,7 +30,7 @@ class PyInterfacer(object):
         if self.cookiename:
             self.initialCookie()
 
-    def requestString(self, url, headers=None, data=None, method=None, encoding=None, cache=True):
+    def requestString(self, url, headers=None, data=None, method=None, encoding=None, cache=isDebug()):
         data = self.requestData(url, headers=headers, data=data, method=method, cache=cache)
         s = None
         if data:

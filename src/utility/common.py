@@ -22,6 +22,7 @@ __all__ = ['isDebug', 'setDebug',
            'readfile', 'writefile', 'replacefile',
            'decodeData',
            'htmlElements', 'firstxpath',
+           'rexMatching', 'rexSearch',
            'str2Json', 'json2Str',
            'systemCmd',
            'multiRun']
@@ -104,11 +105,27 @@ def isdir(path):
     return False
 
 
-def rexMatching(pattern, string):
+def rexMatching(pattern, string, flags=0):
+    result = None
     if string and pattern:
-        return re.match(pattern, string, flags=0)
-    else:
-        return None
+        try:
+            result = re.match(pattern, string, flags=flags)
+        except Exception as e:
+            logger.debug('something error: %s' % e)
+
+    return result
+
+
+def rexSearch(pattern, string, flags=0):
+    result = None
+    if string and pattern:
+        try:
+            result = re.search(pattern, string, flags=flags)
+        except Exception as e:
+            logger.debug('something error: %s' % e)
+
+    return result
+
 
 
 def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False):

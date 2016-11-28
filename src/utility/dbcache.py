@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sqlite3
 import threading
 from utility import *
@@ -24,6 +25,32 @@ class DBCache(object, metaclass=Singleton):
 
     def commit(self):
         self._executeSQL(';', isQueury=False, commit=True)
+
+    def tableContainsColumn(self, table, column):
+        if table and column:
+            sql = self._querySQL('select sql from sqlite_master where type="table" and tbl_name="%s"' % (table))
+            if sql and len(sql) > 0:
+                sql = sql[0][0]
+                regular = r',?\s+[\'"]?' + column + r'[\'"]?\s+'
+                r = rexSearch(regular, sql, flags=re.M)
+                if r is not None:
+                    return True
+
+        return False
+
+    def tableAddColumn(self, table, column, columntype, default=None):
+        if not table or not column or not columntype:
+            return
+
+        if self.tableContainsColumn(table, column):
+            return
+
+        cmd = 'ALTER TABLE %s ADD COLUMN %s %s' % (table, column, columntype)
+        self._updateSQL(cmd, commit=False)
+        if default:
+            cmd = 'update wallpaper set %s=%s where %s is null' % (column, default, column)
+            self._updateSQL(cmd, commit=False)
+        self.commit()
 
     def vacuum(self):
         self._executeSQL('vacuum', isQueury=False, commit=True)
