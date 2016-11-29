@@ -127,7 +127,6 @@ def rexSearch(pattern, string, flags=0):
     return result
 
 
-
 def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False):
     result = []
     if directory and os.path.isdir(directory):
