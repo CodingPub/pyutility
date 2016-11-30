@@ -48,7 +48,8 @@ def addsyspath(path):
 
 
 def cmddir():
-    path = os.path.split(sys.argv[0])[0]
+    path = os.path.abspath(sys.argv[0])
+    path = os.path.split(path)[0]
     return path
 
 
@@ -280,14 +281,6 @@ def runMethod(target, array, begin, step):
 
 
 if __name__ == '__main__':
-    resultSet = set()
-
-    def foo(arr, idx):
-        print(idx)
-        resultSet.add(arr[idx])
-
-    arr = list(range(10))
-    multiRun(foo, arr, 3, 'Start...', 'Finish...')
-    print(resultSet)
+    print(cmddir())
 
     pass
