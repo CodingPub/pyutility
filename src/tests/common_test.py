@@ -50,13 +50,9 @@ class TestCommon(unittest.TestCase):
         resultSet = set()
 
         def foo(arr, idx):
-            if not arr or idx < 0 or idx >= len(arr):
-                return False
-
             resultSet.add(arr[idx])
-            return True
 
-        arr = list(range(100))
+        arr = list(range(10))
         s = set(arr)
         multiRun(foo, arr, 2, 'Start...', 'Finish...')
         self.assertEqual(s, resultSet, msg='multi run error')

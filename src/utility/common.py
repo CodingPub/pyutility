@@ -263,23 +263,31 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg):
     for t in ts:
         t.join()
 
-    if beginMsg:
+    if finishMsg:
         logger.info(finishMsg)
 
 
 def runMethod(target, array, begin, step):
     curIdx = begin
-    if curIdx >= len(array):
+    if array is None or curIdx >= len(array):
         return
 
-    while target(array, curIdx):
+    while True:
+        target(array, curIdx)
         curIdx += step
+        if curIdx >= len(array):
+            break
 
 
 if __name__ == '__main__':
-    path = cmddir()
-    print(path)
-    d, name = splitPath(path, level=2)
-    print(d, name)
+    resultSet = set()
+
+    def foo(arr, idx):
+        print(idx)
+        resultSet.add(arr[idx])
+
+    arr = list(range(10))
+    multiRun(foo, arr, 3, 'Start...', 'Finish...')
+    print(resultSet)
 
     pass
