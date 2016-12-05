@@ -123,18 +123,22 @@ def requestData(url, headers=None, data=None, method=None, cache=False):
     return _interfacer.requestData(url, headers=headers, data=data, method=method, cache=cache)
 
 
+# auto clean cache file before 1 week
+cleanTempDirectory(tempfile.gettempdir(), interval=7 * 24 * 60 * 60)
+
+
 if __name__ == '__main__':
-    i1 = PyInterfacer('cookie1')
-    i1.requestData('http://www.baidu.com')
-    i1.requestData('https://github.com')
-    i1.saveCookie()
+    # i1 = PyInterfacer('cookie1')
+    # i1.requestData('http://www.baidu.com')
+    # i1.requestData('https://github.com')
+    # i1.saveCookie()
 
-    i2 = PyInterfacer('cookie2')
-    i2.requestData('http://www.baidu.com')
-    i2.saveCookie()
+    # i2 = PyInterfacer('cookie2')
+    # i2.requestData('http://www.baidu.com')
+    # i2.saveCookie()
 
-    i3 = PyInterfacer()
-    i3.requestData('http://www.baidu.com')
-    i3.saveCookie()
+    # i3 = PyInterfacer()
+    # i3.requestData('http://www.baidu.com')
+    # i3.saveCookie()
 
     pass

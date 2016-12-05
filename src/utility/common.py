@@ -7,6 +7,8 @@ import shutil
 import json
 import threading
 import re
+import time
+import tempfile
 from utility.logger import *
 from lxml import etree
 
@@ -19,6 +21,7 @@ __all__ = ['isDebug', 'setDebug',
            'createdir', 'createdirs', 'remove',
            'isfile', 'isdir',
            'listdir',
+           'cleanTempDirectory',
            'readfile', 'writefile', 'replacefile',
            'decodeData',
            'htmlElements', 'firstxpath',
@@ -88,10 +91,14 @@ def createdirs(dirs):
 
 
 def remove(path):
-    if os.path.isdir(path):
-        shutil.rmtree(path)
-    elif os.path.isfile(path):
-        os.remove(path)
+    try:
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        elif os.path.isfile(path):
+            os.remove(path)
+    except Exception as e:
+        if isDebug():
+            logger.debug(e)
 
 
 def isfile(path):
@@ -154,6 +161,24 @@ def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False)
                 result.append(file)
 
     return result
+
+
+def cleanTempDirectory(directory, interval=7 * 24 * 60 * 60, sync=False):
+    if sync:
+        _cleanTempDirectory(directory, interval)
+    else:
+        t = threading.Thread(target=_cleanTempDirectory, args=(directory, interval))
+        t.start()
+
+
+def _cleanTempDirectory(directory, interval):
+    array = listdir(directory, nameRex=None, extRex=None, justFile=True, justDir=False)
+    for x in array:
+        path = joinPaths(directory, x)
+        ctime = os.path.getmtime(path)
+        current = time.time()
+        if current - ctime >= interval:
+            remove(path)
 
 
 def readfile(file, encoding='utf-8'):
@@ -281,6 +306,5 @@ def runMethod(target, array, begin, step):
 
 
 if __name__ == '__main__':
-    print(cmddir())
 
     pass
