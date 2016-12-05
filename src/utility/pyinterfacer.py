@@ -59,7 +59,7 @@ class PyInterfacer(object):
         response = None
         req = urllib.request.Request(url, data=data, headers=headers, origin_req_host=None, unverifiable=False, method=method)
         try:
-            with self.opener.open(req) as f:
+            with self.opener.open(req, timeout=30) as f:
                 response = f.read()
         except Exception as e:
             logger.warning('request error: %s, %s' % (e, url))
