@@ -8,7 +8,6 @@ import json
 import threading
 import re
 import time
-import tempfile
 from utility.logger import *
 from lxml import etree
 
