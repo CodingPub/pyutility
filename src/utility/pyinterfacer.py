@@ -116,7 +116,7 @@ def saveCookie():
     _interfacer.saveCookie()
 
 
-def requestString(url, headers=None, data=None, method=None, encoding=None, cache=isDebug()):
+def requestString(url, headers=None, data=None, method=None, encoding=None, cache=None):
     global _interfacer
     return _interfacer.requestString(url, headers=headers, data=data, method=method, encoding=encoding, cache=cache)
 

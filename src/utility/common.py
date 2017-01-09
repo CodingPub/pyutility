@@ -26,6 +26,7 @@ __all__ = ['isDebug', 'setDebug',
            'htmlElements', 'firstxpath',
            'rexMatching', 'rexSearch',
            'str2Json', 'json2Str',
+           'jsonArr2ItemArr',
            'systemCmd',
            'multiRun']
 
@@ -258,6 +259,16 @@ def json2Str(jsonStr):
             if isDebug():
                 logger.debug('json2Str:%s' % e)
 
+    return result
+
+
+def jsonArr2ItemArr(jsonArr, selector):
+    result = []
+    if jsonArr and len(jsonArr) > 0:
+        for x in jsonArr:
+            w = selector(x)
+            if w:
+                result.append(w)
     return result
 
 
