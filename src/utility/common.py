@@ -287,12 +287,16 @@ def systemCmd(cmd, directory=None, log=False):
         return os.system(cmd)
 
 
-def multiRun(target, array, threadCount, beginMsg, finishMsg):
+def multiRun(target, array, threadCount, beginMsg, finishMsg, **kw):
     if beginMsg:
         logger.info(beginMsg)
     ts = []
+
+    if array is not None and threadCount > len(array):
+        threadCount = len(array)
+
     for idx in range(0, threadCount):
-        args = (target, array, idx, threadCount)
+        args = (target, array, idx, threadCount, kw.get('args'))
         t = threading.Thread(target=runMethod, args=args)
         t.start()
         ts.append(t)
@@ -303,18 +307,22 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg):
         logger.info(finishMsg)
 
 
-def runMethod(target, array, begin, step):
+def runMethod(target, array, begin, step, args=None):
     curIdx = begin
-    if array is None or curIdx >= len(array):
-        return
 
-    while True:
-        target(array, curIdx)
-        curIdx += step
-        if curIdx >= len(array):
-            break
+    if array is None:
+        while True:
+            result = target(curIdx, args)
+            if result is None or not result:
+                break
+            curIdx += step
+    elif curIdx < len(array):
+        while curIdx < len(array):
+            target(array, curIdx)
+            curIdx += step
 
 
 if __name__ == '__main__':
+
 
     pass
