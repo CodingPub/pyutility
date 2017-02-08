@@ -49,12 +49,13 @@ class TestCommon(unittest.TestCase):
     def testMultRun(self):
         resultSet = set()
 
-        def foo(arr, idx):
+        def foo(arr, idx, args):
+            print(args)
             resultSet.add(arr[idx])
 
         arr = list(range(10))
         s = set(arr)
-        multiRun(foo, arr, 2, 'Start...', 'Finish...')
+        multiRun(foo, arr, 2, 'Start...', 'Finish...', args='test')
         self.assertEqual(s, resultSet, msg='multi run error')
 
 

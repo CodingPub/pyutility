@@ -24,7 +24,7 @@ __all__ = ['isDebug', 'setDebug',
            'readfile', 'writefile', 'replacefile',
            'decodeData',
            'htmlElements', 'firstxpath',
-           'rexMatching', 'rexSearch',
+           'rexMatching', 'rexSearch', 'rexFindAll',
            'str2Json', 'json2Str',
            'jsonArr2ItemArr',
            'systemCmd',
@@ -129,6 +129,17 @@ def rexSearch(pattern, string, flags=0):
     if string and pattern:
         try:
             result = re.search(pattern, string, flags=flags)
+        except Exception as e:
+            logger.debug('something error: %s' % e)
+
+    return result
+
+
+def rexFindAll(pattern, string, flags=0):
+    result = None
+    if string and pattern:
+        try:
+            result = re.findall(pattern, string, flags=flags)
         except Exception as e:
             logger.debug('something error: %s' % e)
 
@@ -318,11 +329,10 @@ def runMethod(target, array, begin, step, args=None):
             curIdx += step
     elif curIdx < len(array):
         while curIdx < len(array):
-            target(array, curIdx)
+            target(array, curIdx, args=args)
             curIdx += step
 
 
 if __name__ == '__main__':
-
 
     pass

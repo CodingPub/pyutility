@@ -83,7 +83,7 @@ class DBCache(object, metaclass=Singleton):
             if not isQueury and commit:
                 con.commit()
         except Exception as e:
-            print('except: ', e)
+            print('db except: ', e)
             # raise e
         finally:
             cursor.close()
