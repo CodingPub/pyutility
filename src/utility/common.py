@@ -283,7 +283,12 @@ def jsonArr2ItemArr(jsonArr, selector):
     return result
 
 
+_cmdlock = threading.Lock()
+
+
 def systemCmd(cmd, directory=None, log=False):
+    _cmdlock.acquire()
+
     if directory is not None:
         os.chdir(directory)
     if isDebug():
@@ -296,6 +301,8 @@ def systemCmd(cmd, directory=None, log=False):
         return text
     else:
         return os.system(cmd)
+
+    _cmdlock.release()
 
 
 def multiRun(target, array, threadCount, beginMsg, finishMsg, **kw):
