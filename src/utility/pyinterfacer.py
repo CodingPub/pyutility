@@ -9,6 +9,7 @@ import http.cookiejar
 import urllib.request
 from utility.common import *
 from utility.logger import *
+from utility.proxy import *
 
 __author__ = 'Lin Xiaobin'
 
@@ -27,14 +28,14 @@ class PyInterfacer(object):
 
         self.cookiejar = None
         self.opener = None
-        if self.cookiename:
-            self.initialCookie()
+        # if self.cookiename:
+        #     self.initialCookie()
 
-    def requestString(self, url, headers=None, data=None, method=None, encoding=None, cache=None):
+    def requestString(self, url, headers=None, data=None, method=None, encoding=None, cache=None, randProxy=False):
         if cache is None:
             cache = isDebug()
 
-        data = self.requestData(url, headers=headers, data=data, method=method, cache=cache)
+        data = self.requestData(url, headers=headers, data=data, method=method, cache=cache, randProxy=randProxy)
         s = None
         if data:
             if encoding:
@@ -45,7 +46,7 @@ class PyInterfacer(object):
                     s = decodeData(data, encoding='gbk')
         return s
 
-    def requestData(self, url, headers=None, data=None, method=None, cache=False):
+    def requestData(self, url, headers=None, data=None, method=None, cache=False, randProxy=False):
         if not headers:
             headers = {}
 
@@ -61,11 +62,20 @@ class PyInterfacer(object):
 
         response = None
         req = urllib.request.Request(url, data=data, headers=headers, origin_req_host=None, unverifiable=False, method=method)
+        if randProxy:
+            proxy = ProxyPool().randProxy()
+            print(proxy)
+            self.rebuildOpener(proxy={'http': proxy})
+        else:
+            self.rebuildOpener(proxy=None)
         try:
             with self.opener.open(req, timeout=30) as f:
                 response = f.read()
         except Exception as e:
             logger.warning('request error: %s, %s' % (e, url))
+            if randProxy and proxy:
+                print('check proxy:', proxy)
+                ProxyPool()._vertifyProxy(proxy, times=1)
 
         if response and cachePath:
             with open(cachePath, 'wb') as f:
@@ -78,6 +88,24 @@ class PyInterfacer(object):
             return joinPaths(tempfile.gettempdir(), '%s.txt' % self.cookiename)
         else:
             return None
+
+    def rebuildOpener(self, proxy=None):
+        path = self.cookiePath()
+        if self.cookiejar is None and path is not None:
+            logger.info('initialCookie: ' + path)
+            cj = http.cookiejar.MozillaCookieJar()
+            self.cookiejar = cj
+            if os.path.isfile(path):
+                cj.load(path)
+
+        hcj = urllib.request.HTTPCookieProcessor(self.cookiejar)
+
+        args = [hcj]
+        if proxy:
+            args.append(urllib.request.ProxyHandler(proxy))
+
+        opener = urllib.request.build_opener(*args)
+        self.opener = opener
 
     def initialCookie(self):
         path = self.cookiePath()
@@ -131,8 +159,11 @@ cleanTempDirectory(tempfile.gettempdir(), interval=7 * 24 * 60 * 60)
 
 
 if __name__ == '__main__':
-    # i1 = PyInterfacer('cookie1')
-    # i1.requestData('http://www.baidu.com')
+    i1 = PyInterfacer('cookie1')
+    # url = 'http://httpbin.org/ip'
+    url = 'http://www.piggif.com/category/'
+    data = i1.requestData(url, randProxy=True)
+    print(data)
     # i1.requestData('https://github.com')
     # i1.saveCookie()
 
