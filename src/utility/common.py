@@ -294,15 +294,17 @@ def systemCmd(cmd, directory=None, log=False):
     if isDebug():
         logger.debug(cmd)
 
+    result = None
     if log:
         r = os.popen(cmd)
-        text = r.read()
+        result = r.read()
         r.close()
-        return text
     else:
-        return os.system(cmd)
+        result = os.system(cmd)
 
     _cmdlock.release()
+
+    return result
 
 
 def multiRun(target, array, threadCount, beginMsg, finishMsg, **kw):

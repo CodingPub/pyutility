@@ -13,7 +13,7 @@ from utility import *
 
 directory = cmddir()
 
-if systemCmd('git --version'):
+if systemCmd('git --version') == 0:
     cmd = 'git pull --all'
     systemCmd(cmd, directory=directory)
 
