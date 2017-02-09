@@ -307,7 +307,7 @@ def systemCmd(cmd, directory=None, log=False):
     return result
 
 
-def multiRun(target, array, threadCount, beginMsg, finishMsg, **kw):
+def multiRun(target, array, threadCount, beginMsg, finishMsg, args=None):
     if beginMsg:
         logger.info(beginMsg)
     ts = []
@@ -316,8 +316,7 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg, **kw):
         threadCount = len(array)
 
     for idx in range(0, threadCount):
-        args = (target, array, idx, threadCount, kw.get('args'))
-        t = threading.Thread(target=runMethod, args=args)
+        t = threading.Thread(target=runMethod, args=[target, array, idx, threadCount, args])
         t.start()
         ts.append(t)
     for t in ts:
@@ -327,21 +326,39 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg, **kw):
         logger.info(finishMsg)
 
 
-def runMethod(target, array, begin, step, args=None):
+def runMethod(target, array, begin, step, kw):
     curIdx = begin
 
     if array is None:
         while True:
-            result = target(curIdx, args)
+            result = target(curIdx, args=kw)
             if result is None or not result:
                 break
             curIdx += step
     elif curIdx < len(array):
         while curIdx < len(array):
-            target(array, curIdx, args=args)
+            target(array, curIdx, args=kw)
             curIdx += step
 
 
 if __name__ == '__main__':
+
+    resultSet = set()
+
+    def foo(arr, idx, args):
+        print(args)
+        resultSet.add(arr[idx])
+
+    def foo2(idx, args):
+        print(idx, args)
+        if idx < 9:
+            return True
+        else:
+            return False
+
+    arr = list(range(10))
+    s = set(arr)
+    # multiRun(foo, arr, 2, 'Start...', 'Finish...', arg1='arg1v')
+    multiRun(foo2, None, 2, 'Start...', 'Finish...', args='arg1v')
 
     pass

@@ -58,6 +58,14 @@ class TestCommon(unittest.TestCase):
         multiRun(foo, arr, 2, 'Start...', 'Finish...', args='test')
         self.assertEqual(s, resultSet, msg='multi run error')
 
+        def foo2(idx, args):
+            print(idx, args)
+            if idx < 9:
+                return True
+            else:
+                return False
+        multiRun(foo2, None, 2, 'Start...', 'Finish...', args='test')
+
 
 if __name__ == '__main__':
     unittest.main()
