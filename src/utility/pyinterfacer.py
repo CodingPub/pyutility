@@ -74,8 +74,8 @@ class PyInterfacer(object):
         except Exception as e:
             logger.warning('request error: %s, %s' % (e, url))
             if randProxy and proxy:
-                print('check proxy:', proxy)
-                ProxyPool()._vertifyProxy(proxy, times=1)
+                # print('check proxy:', proxy)
+                ProxyPool().vertifyProxy(proxy, times=1)
 
         if response and cachePath:
             with open(cachePath, 'wb') as f:
@@ -144,14 +144,14 @@ def saveCookie():
     _interfacer.saveCookie()
 
 
-def requestString(url, headers=None, data=None, method=None, encoding=None, cache=None):
+def requestString(url, headers=None, data=None, method=None, encoding=None, cache=None, randProxy=False):
     global _interfacer
-    return _interfacer.requestString(url, headers=headers, data=data, method=method, encoding=encoding, cache=cache)
+    return _interfacer.requestString(url, headers=headers, data=data, method=method, encoding=encoding, cache=cache, randProxy=randProxy)
 
 
-def requestData(url, headers=None, data=None, method=None, cache=False):
+def requestData(url, headers=None, data=None, method=None, cache=False, randProxy=False):
     global _interfacer
-    return _interfacer.requestData(url, headers=headers, data=data, method=method, cache=cache)
+    return _interfacer.requestData(url, headers=headers, data=data, method=method, cache=cache, randProxy=randProxy)
 
 
 # auto clean cache file before 1 week
@@ -162,7 +162,7 @@ if __name__ == '__main__':
     i1 = PyInterfacer('cookie1')
     # url = 'http://httpbin.org/ip'
     url = 'http://www.piggif.com/category/'
-    data = i1.requestData(url, randProxy=True)
+    data = requestData(url, randProxy=True)
     print(data)
     # i1.requestData('https://github.com')
     # i1.saveCookie()

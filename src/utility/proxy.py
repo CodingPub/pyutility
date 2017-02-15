@@ -34,22 +34,30 @@ class ProxyPool(object, metaclass=Singleton):
         if len(self.ips) < 30:
             self.scanProxies()
 
+    # 验证单个代理
+    def vertifyProxy(self, ip, times=2):
+        for x in range(times):
+            if self._isProxyEable(ip):
+                self._addProxy(ip)
+                return
+        self._deleteProxy(ip)
+
     # 随机获取一个代理，代理不足时自动扫描
     def randProxy(self):
         result = None
         self.lock.acquire()
         count = len(self.ips)
-        if count >= 0:
+        if count > 0:
             result = self.ips[random.randint(0, count - 1)]
         self.lock.release()
         return result
 
     def scanProxies(self):
         if isDebug():
-            # self.get_from_ipcn()
+            self.get_from_ipcn()
             # self.get_from_xicidaili()
             # self.get_from_kxdaili()
-            self.get_from_66ip()
+            # self.get_from_66ip()
             pass
         else:
             self.get_from_kxdaili()
@@ -90,13 +98,16 @@ class ProxyPool(object, metaclass=Singleton):
                 html = requestString(url % (page), headers=headers)
                 page += 1
 
-                table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')[1:]
-                iplist = []
-                for tr in table[1:]:
-                    tds = tr.getchildren()
-                    ip = tds[0].text + ':' + tds[1].text
-                    iplist.append(ip)
-                self._vertifyProxies(iplist)
+                table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')
+                print(table)
+                if table is not None:
+                    table = table[1:]
+                    iplist = []
+                    for tr in table[1:]:
+                        tds = tr.getchildren()
+                        ip = tds[0].text + ':' + tds[1].text
+                        iplist.append(ip)
+                    self._vertifyProxies(iplist)
 
     def get_from_66ip(self):
         urls = ['http://www.66ip.cn/nmtq.php?getnum=600&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip']
@@ -113,22 +124,15 @@ class ProxyPool(object, metaclass=Singleton):
         multiRun(self._vertifyOneProxy, nl, 10, '', '')
 
     def _vertifyOneProxy(self, array, index, args=None):
-        self._vertifyProxy(array[index])
-
-    def _vertifyProxy(self, ip, times=2):
-        for x in range(times):
-            if self._isProxyEable(ip):
-                self._addProxy(ip)
-                return
-        self._deleteProxy(ip)
+        self.vertifyProxy(array[index])
 
     def _addProxy(self, ip):
         if ip is None:
             return
 
-        # print('add ip:', ip)
         self.lock.acquire()
         if ip not in self.ips:
+            print('add ip:', ip)
             self.ips.append(ip)
             self.cache.addIP(ip)
         self.lock.release()
@@ -137,9 +141,9 @@ class ProxyPool(object, metaclass=Singleton):
         if ip is None:
             return
 
-        # print('delete ip:', ip)
         self.lock.acquire()
         if ip in self.ips:
+            print('delete ip:', ip)
             self.ips.remove(ip)
             self.cache.deleteIP(ip)
         self.lock.release()
@@ -206,8 +210,8 @@ if __name__ == '__main__':
     # setDebug(True)
 
     pool = ProxyPool()
-    pool.scanProxies()
+    # pool.scanProxies()
     # pool.vertifyAllProxies()
-    # print(pool.randProxy())
+    print(pool.randProxy())
 
     pass
