@@ -31,11 +31,16 @@ class PyInterfacer(object):
         # if self.cookiename:
         #     self.initialCookie()
 
-    def requestString(self, url, headers=None, data=None, method=None, encoding=None, cache=None, randProxy=False):
+    def requestString(self, url, headers=None, data=None, method=None, encoding=None, cache=None, randProxy=False, retryTimes=1):
         if cache is None:
             cache = isDebug()
 
-        data = self.requestData(url, headers=headers, data=data, method=method, cache=cache, randProxy=randProxy)
+        data = None
+        for x in range(retryTimes):
+            data = self.requestData(url, headers=headers, data=data, method=method, cache=cache, randProxy=randProxy)
+            if data is not None:
+                break
+
         s = None
         if data:
             if encoding:
@@ -144,9 +149,9 @@ def saveCookie():
     _interfacer.saveCookie()
 
 
-def requestString(url, headers=None, data=None, method=None, encoding=None, cache=None, randProxy=False):
+def requestString(url, headers=None, data=None, method=None, encoding=None, cache=None, randProxy=False, retryTimes=1):
     global _interfacer
-    return _interfacer.requestString(url, headers=headers, data=data, method=method, encoding=encoding, cache=cache, randProxy=randProxy)
+    return _interfacer.requestString(url, headers=headers, data=data, method=method, encoding=encoding, cache=cache, randProxy=randProxy, retryTimes=retryTimes)
 
 
 def requestData(url, headers=None, data=None, method=None, cache=False, randProxy=False):
