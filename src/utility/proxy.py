@@ -99,7 +99,7 @@ class ProxyPool(object, metaclass=Singleton):
                 page += 1
 
                 table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')
-                print(table)
+                # print(table)
                 if table is not None:
                     table = table[1:]
                     iplist = []
@@ -211,7 +211,7 @@ if __name__ == '__main__':
 
     pool = ProxyPool()
     # pool.scanProxies()
-    # pool.vertifyAllProxies()
+    pool.vertifyAllProxies()
     print(pool.randProxy())
 
     pass
