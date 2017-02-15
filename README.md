@@ -16,6 +16,7 @@ cat install.txt | xargs rm -rf
 ### common
 
 * [lxml](https://pypi.python.org/pypi/lxml/3.4.4)
+* requests
 
 ### vcode
 
