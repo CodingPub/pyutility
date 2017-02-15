@@ -265,7 +265,7 @@ def json2Str(jsonStr):
     result = None
     if jsonStr:
         try:
-            result = json.dumps(jsonStr)
+            result = json.dumps(jsonStr, ensure_ascii=False, indent=2)
         except Exception as e:
             if isDebug():
                 logger.debug('json2Str:%s' % e)
@@ -317,6 +317,7 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg, args=None):
 
     for idx in range(0, threadCount):
         t = threading.Thread(target=runMethod, args=[target, array, idx, threadCount, args])
+        t.setDaemon(True)
         t.start()
         ts.append(t)
     for t in ts:
