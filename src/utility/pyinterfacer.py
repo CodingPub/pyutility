@@ -69,7 +69,7 @@ class PyInterfacer(object):
         req = urllib.request.Request(url, data=data, headers=headers, origin_req_host=None, unverifiable=False, method=method)
         if randProxy:
             proxy = ProxyPool().randProxy()
-            print(proxy)
+            # print(proxy)
             self.rebuildOpener(proxy={'http': proxy})
         else:
             self.rebuildOpener(proxy=None)

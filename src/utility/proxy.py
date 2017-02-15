@@ -11,7 +11,7 @@ from utility.common import *
 from utility.singleton import *
 from utility.logger import *
 from utility.dbcache import *
-from utility.pyinterfacer import *
+from utility import pyinterfacer
 
 
 __author__ = 'Lin Xiaobin'
@@ -31,8 +31,7 @@ class ProxyPool(object, metaclass=Singleton):
     # 验证本地代理列表，代理个数不足30时重新扫描
     def vertifyAllProxies(self):
         self._vertifyProxies(self.ips)
-        if len(self.ips) < 30:
-            self.scanProxies()
+        self.scanProxies()
 
     # 验证单个代理
     def vertifyProxy(self, ip, times=2):
@@ -60,9 +59,12 @@ class ProxyPool(object, metaclass=Singleton):
             # self.get_from_66ip()
             pass
         else:
-            self.get_from_kxdaili()
-            self.get_from_xicidaili()
-            self.get_from_ipcn()
+            methods = [self.get_from_kxdaili, 
+                       self.get_from_xicidaili, 
+                       self.get_from_ipcn]
+            for scan in methods:
+                if len(self.ips) < 30:
+                    scan()
 
             # 海外
             # self.get_from_66ip()
@@ -72,7 +74,7 @@ class ProxyPool(object, metaclass=Singleton):
         urls = ['http://proxy.ipcn.org/proxya.html', 'http://proxy.ipcn.org/proxyb.html']
 
         for url in urls:
-            html = requestString(url, headers=headers)
+            html = pyinterfacer.requestString(url, headers=headers)
             ips = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(ips)
 
@@ -80,7 +82,7 @@ class ProxyPool(object, metaclass=Singleton):
         urls = ['http://www.xicidaili.com/nn/',
                 'http://www.xicidaili.com/nn/2', 'http://www.xicidaili.com/wn/']
         for url in urls:
-            html = requestString(url, headers=headers)
+            html = pyinterfacer.requestString(url, headers=headers)
             table = htmlElements(html, '//*[@id="ip_list"]/tr')[1:]
             iplist = []
             for tr in table[1:]:
@@ -95,7 +97,7 @@ class ProxyPool(object, metaclass=Singleton):
         for url in urls:
             page = 1
             while page <= 10:
-                html = requestString(url % (page), headers=headers)
+                html = pyinterfacer.requestString(url % (page), headers=headers)
                 page += 1
 
                 table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')
@@ -112,7 +114,7 @@ class ProxyPool(object, metaclass=Singleton):
     def get_from_66ip(self):
         urls = ['http://www.66ip.cn/nmtq.php?getnum=600&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip']
         for url in urls:
-            html = requestString(url, headers=headers)
+            html = pyinterfacer.requestString(url, headers=headers)
             iplist = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(iplist)
 
