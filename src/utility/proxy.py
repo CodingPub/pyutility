@@ -21,25 +21,30 @@ __all__ = ['ProxyPool']
 headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0"}
 
 
+_proxyIndex = 0
+
+
 class ProxyPool(object, metaclass=Singleton):
     def __init__(self):
         super(ProxyPool, self).__init__()
         self.cache = ProxyCache()
         self.ips = self.cache.queryIP(ip=None)
         self.lock = threading.Lock()
+        self.isScaning = False
 
-    # 验证本地代理列表，代理个数不足30时重新扫描
+    # 验证本地代理列表
     def vertifyAllProxies(self):
-        self._vertifyProxies(self.ips)
-        self.scanProxies()
+        self._vertifyProxies(self.ips, isLocal=True)
+        self.scanProxies(minProxies=15)
 
     # 验证单个代理
-    def vertifyProxy(self, ip, times=2):
+    def vertifyProxy(self, ip, times=1):
         for x in range(times):
             if self._isProxyEable(ip):
                 self._addProxy(ip)
                 return
         self._deleteProxy(ip)
+        self.scanProxies(minProxies=5)
 
     # 随机获取一个代理，代理不足时自动扫描
     def randProxy(self):
@@ -47,11 +52,18 @@ class ProxyPool(object, metaclass=Singleton):
         self.lock.acquire()
         count = len(self.ips)
         if count > 0:
-            result = self.ips[random.randint(0, count - 1)]
+            # 优先取前8个代理
+            idx = random.randint(0, min([count, 8]) - 1)
+            result = self.ips[idx]
         self.lock.release()
         return result
 
-    def scanProxies(self):
+    def scanProxies(self, minProxies):
+        if self.isScaning:
+            return
+        else:
+            self.isScaning = True
+
         if isDebug():
             self.get_from_ipcn()
             # self.get_from_xicidaili()
@@ -59,15 +71,22 @@ class ProxyPool(object, metaclass=Singleton):
             # self.get_from_66ip()
             pass
         else:
-            methods = [self.get_from_kxdaili, 
-                       self.get_from_xicidaili, 
-                       self.get_from_ipcn]
+            methods = [self.get_from_ipcn,
+                       self.get_from_kxdaili,
+                       self.get_from_xicidaili]
             for scan in methods:
-                if len(self.ips) < 30:
+                if len(self.ips) < minProxies:
                     scan()
 
             # 海外
             # self.get_from_66ip()
+        self.isScaning = False
+
+    def cleanAllProxy(self):
+        self.lock.acquire()
+        self.ips = []
+        self.cache.cleanAllIP()
+        self.lock.release()
 
     def get_from_ipcn(self):
         # 海外 'http://proxy.ipcn.org/proxya2.html', 'http://proxy.ipcn.org/proxyb2.html'
@@ -118,15 +137,19 @@ class ProxyPool(object, metaclass=Singleton):
             iplist = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(iplist)
 
-    def _vertifyProxies(self, array):
+    def _vertifyProxies(self, array, isLocal=False):
         if array is None:
             return
 
         nl = array[:]
-        multiRun(self._vertifyOneProxy, nl, 10, '', '')
+        multiRun(self._vertifyOneProxy, nl, 10, '', '', args={'isLocal': isLocal})
 
     def _vertifyOneProxy(self, array, index, args=None):
-        self.vertifyProxy(array[index])
+        proxy = array[index]
+        if args.get('isLocal') or proxy not in self.ips:
+            self.vertifyProxy(proxy)
+        else:
+            print('pass check', proxy)
 
     def _addProxy(self, ip):
         if ip is None:
@@ -196,6 +219,10 @@ class ProxyCache(DBCache):
         cmd = 'delete from enableips where ip="%s"' % ip
         self._updateSQL(cmd, commit=True)
 
+    def cleanAllIP(self):
+        cmd = 'delete from enableips'
+        self._updateSQL(cmd, commit=True)
+
     def queryIP(self, ip=None):
         cmd = 'select ip from enableips where 1=1 '
         if ip:
@@ -212,8 +239,8 @@ if __name__ == '__main__':
     # setDebug(True)
 
     pool = ProxyPool()
-    # pool.scanProxies()
+    print(len(pool.ips))
     pool.vertifyAllProxies()
-    print(pool.randProxy())
+    print(len(pool.ips))
 
     pass
