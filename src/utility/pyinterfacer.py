@@ -35,20 +35,20 @@ class PyInterfacer(object):
         if cache is None:
             cache = isDebug()
 
-        data = None
+        response = None
         for x in range(retryTimes):
-            data = self.requestData(url, headers=headers, data=data, method=method, cache=cache, randProxy=randProxy)
-            if data is not None:
+            response = self.requestData(url, headers=headers, data=data, method=method, cache=cache, randProxy=randProxy)
+            if response is not None:
                 break
 
         s = None
-        if data:
+        if response:
             if encoding:
-                s = decodeData(data, encoding=encoding)
+                s = decodeData(response, encoding=encoding)
             else:
-                s = decodeData(data, encoding='utf-8')
+                s = decodeData(response, encoding='utf-8')
                 if not s:
-                    s = decodeData(data, encoding='gbk')
+                    s = decodeData(response, encoding='gbk')
         return s
 
     def requestData(self, url, headers=None, data=None, method=None, cache=False, randProxy=False):
