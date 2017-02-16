@@ -102,13 +102,16 @@ class ProxyPool(object, metaclass=Singleton):
                 'http://www.xicidaili.com/nn/2', 'http://www.xicidaili.com/wn/']
         for url in urls:
             html = pyinterfacer.requestString(url, headers=headers)
-            table = htmlElements(html, '//*[@id="ip_list"]/tr')[1:]
-            iplist = []
-            for tr in table[1:]:
-                tds = tr.getchildren()
-                ip = tds[1].text + ':' + tds[2].text
-                iplist.append(ip)
-            self._vertifyProxies(iplist)
+            table = htmlElements(html, '//*[@id="ip_list"]/tr')
+            if table is not None and len(table) > 1:
+                table = table[1:]
+                iplist = []
+                for tr in table[1:]:
+                    tds = tr.getchildren()
+                    if tds is not None and len(tds) > 2:
+                        ip = tds[1].text + ':' + tds[2].text
+                        iplist.append(ip)
+                self._vertifyProxies(iplist)
 
     def get_from_kxdaili(self):
         # 海外 'http://www.kxdaili.com/dailiip/3/%s.html'
@@ -121,13 +124,14 @@ class ProxyPool(object, metaclass=Singleton):
 
                 table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')
                 # print(table)
-                if table is not None:
+                if table is not None and len(table) > 1:
                     table = table[1:]
                     iplist = []
                     for tr in table[1:]:
                         tds = tr.getchildren()
-                        ip = tds[0].text + ':' + tds[1].text
-                        iplist.append(ip)
+                        if tds is not None and len(tds) > 1:
+                            ip = tds[0].text + ':' + tds[1].text
+                            iplist.append(ip)
                     self._vertifyProxies(iplist)
 
     def get_from_66ip(self):
