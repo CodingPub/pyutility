@@ -13,9 +13,8 @@ from utility import *
 
 directory = cmddir()
 
-if systemCmd('git --version') == 0:
-    cmd = 'git pull --all'
-    systemCmd(cmd, directory=directory)
+cmd = 'git pull --all'
+systemCmd(cmd, directory=directory)
 
 cmd = 'python setup.py install --record install.txt'
 systemCmd(cmd, directory=directory)
