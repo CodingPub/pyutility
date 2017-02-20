@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+import sys
+sys.path.insert(0, '..')
 from utility.common import *
 from utility.logger import *
-import os
 
 __author__ = 'Lin Xiaobin'
 

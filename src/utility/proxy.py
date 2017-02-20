@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
 import tempfile
 import threading
 import time
 import requests
 import random
 import tempfile
+sys.path.insert(0, '..')
 from utility.common import *
 from utility.singleton import *
 from utility.logger import *
 from utility.dbcache import *
-from utility import pyinterfacer
+from utility.pyinterfacer import *
 
 
 __author__ = 'Lin Xiaobin'
@@ -93,7 +95,7 @@ class ProxyPool(object, metaclass=Singleton):
         urls = ['http://proxy.ipcn.org/proxya.html', 'http://proxy.ipcn.org/proxyb.html']
 
         for url in urls:
-            html = pyinterfacer.requestString(url, headers=headers)
+            html = requestString(url, headers=headers)
             ips = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(ips)
 
@@ -101,7 +103,7 @@ class ProxyPool(object, metaclass=Singleton):
         urls = ['http://www.xicidaili.com/nn/',
                 'http://www.xicidaili.com/nn/2', 'http://www.xicidaili.com/wn/']
         for url in urls:
-            html = pyinterfacer.requestString(url, headers=headers)
+            html = requestString(url, headers=headers)
             table = htmlElements(html, '//*[@id="ip_list"]/tr')
             if table is not None and len(table) > 1:
                 table = table[1:]
@@ -119,7 +121,7 @@ class ProxyPool(object, metaclass=Singleton):
         for url in urls:
             page = 1
             while page <= 10:
-                html = pyinterfacer.requestString(url % (page), headers=headers)
+                html = requestString(url % (page), headers=headers)
                 page += 1
 
                 table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')
@@ -137,7 +139,7 @@ class ProxyPool(object, metaclass=Singleton):
     def get_from_66ip(self):
         urls = ['http://www.66ip.cn/nmtq.php?getnum=600&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip']
         for url in urls:
-            html = pyinterfacer.requestString(url, headers=headers)
+            html = requestString(url, headers=headers)
             iplist = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(iplist)
 

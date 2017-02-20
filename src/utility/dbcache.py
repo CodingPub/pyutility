@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import re
 import sqlite3
 import threading
+sys.path.insert(0, '..')
 from utility import *
 
 __author__ = 'Lin Xiaobin'

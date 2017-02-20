@@ -8,6 +8,7 @@ import json
 import threading
 import re
 import time
+sys.path.insert(0, '..')
 from utility.logger import *
 from lxml import etree
 

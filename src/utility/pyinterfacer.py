@@ -3,10 +3,12 @@
 
 
 import os
+import sys
 import tempfile
 import hashlib
 import http.cookiejar
 import urllib.request
+sys.path.insert(0, '..')
 from utility.common import *
 from utility.logger import *
 from utility.proxy import *
