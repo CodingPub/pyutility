@@ -8,6 +8,9 @@ import time
 import requests
 import random
 import tempfile
+import hashlib
+import http.cookiejar
+import urllib.request
 sys.path.insert(0, '..')
 from utility.common import *
 from utility.singleton import *
@@ -95,7 +98,7 @@ class ProxyPool(object, metaclass=Singleton):
         urls = ['http://proxy.ipcn.org/proxya.html', 'http://proxy.ipcn.org/proxyb.html']
 
         for url in urls:
-            html = requestString(url, headers=headers)
+            html = ProxyInterfacer.requestString(url, headers=headers)
             ips = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(ips)
 
@@ -103,7 +106,7 @@ class ProxyPool(object, metaclass=Singleton):
         urls = ['http://www.xicidaili.com/nn/',
                 'http://www.xicidaili.com/nn/2', 'http://www.xicidaili.com/wn/']
         for url in urls:
-            html = requestString(url, headers=headers)
+            html = ProxyInterfacer.requestString(url, headers=headers)
             table = htmlElements(html, '//*[@id="ip_list"]/tr')
             if table is not None and len(table) > 1:
                 table = table[1:]
@@ -121,7 +124,7 @@ class ProxyPool(object, metaclass=Singleton):
         for url in urls:
             page = 1
             while page <= 10:
-                html = requestString(url % (page), headers=headers)
+                html = ProxyInterfacer.requestString(url % (page), headers=headers)
                 page += 1
 
                 table = htmlElements(html, '//*[@id="nav_btn01"]/div[6]/table/tbody/tr')
@@ -139,7 +142,7 @@ class ProxyPool(object, metaclass=Singleton):
     def get_from_66ip(self):
         urls = ['http://www.66ip.cn/nmtq.php?getnum=600&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=&area=0&proxytype=0&api=66ip']
         for url in urls:
-            html = requestString(url, headers=headers)
+            html = ProxyInterfacer.requestString(url, headers=headers)
             iplist = rexFindAll('\d+\.\d+\.\d+\.\d+:\d+', html)
             self._vertifyProxies(iplist)
 
@@ -239,6 +242,67 @@ class ProxyCache(DBCache):
             return []
         else:
             return [x[0] for x in values if x is not None and len(x) > 0]
+
+
+class ProxyInterfacer(object):
+    def __init__(self, cookiename=None):
+        super(ProxyInterfacer, self).__init__()
+
+    @classmethod
+    def requestString(cls, url, headers=None, data=None, method=None, encoding=None, cache=None, proxy=False, retryTimes=1, timeout=5):
+        if cache is None:
+            cache = isDebug()
+
+        response = None
+        for x in range(retryTimes):
+            response = cls.requestData(url, headers=headers, data=data, method=method, cache=cache, proxy=proxy, timeout=timeout)
+            if response is not None:
+                break
+
+        s = None
+        if response:
+            if encoding:
+                s = decodeData(response, encoding=encoding)
+            else:
+                s = decodeData(response, encoding='utf-8')
+                if not s:
+                    s = decodeData(response, encoding='gbk')
+        return s
+
+    @classmethod
+    def requestData(cls, url, headers=None, data=None, method=None, cache=False, proxy=False, timeout=5):
+        if not headers:
+            headers = {}
+
+        cachePath = None
+        if cache:
+            md5Str = url
+            md5Str = md5Str + urllib.parse.urlencode(headers)
+            cachePath = os.path.join(tempfile.gettempdir(), hashlib.md5(md5Str.encode('utf-8')).hexdigest())
+            if os.path.isfile(cachePath):
+                logger.debug('load cache: ' + cachePath + ' url:' + url)
+                with open(cachePath, 'rb') as f:
+                    return f.read()
+
+        response = None
+        req = urllib.request.Request(url, data=data, headers=headers, origin_req_host=None, unverifiable=False, method=method)
+
+        args = []
+        if proxy:
+            args.append(urllib.request.ProxyHandler(proxy))
+        opener = urllib.request.build_opener(*args)
+
+        try:
+            with opener.open(req, timeout=timeout) as f:
+                response = f.read()
+        except Exception as e:
+            logger.warning('request error: %s, %s' % (e, url))
+
+        if response and cachePath:
+            with open(cachePath, 'wb') as f:
+                f.write(response)
+
+        return response
 
 
 if __name__ == '__main__':
