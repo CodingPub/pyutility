@@ -8,3 +8,4 @@ from utility.dbcache import *
 from utility.package import *
 from utility.pyinterfacer import *
 from utility.proxy import *
+from utility.gzip_util import *

@@ -17,13 +17,13 @@ __author__ = 'Lin Xiaobin'
 
 __all__ = ['isDebug', 'setDebug',
            'addsyspath',
-           'cmddir', 'joinPaths', 'splitPath',
+           'cmddir', 'joinPaths', 'splitPath', 'absPath',
            'createdir', 'createdirs', 'remove',
            'isfile', 'isdir',
            'listdir',
            'cleanTempDirectory',
            'readfile', 'writefile', 'replacefile',
-           'decodeData',
+           'decodeData', 'encodeData',
            'htmlElements', 'firstxpath',
            'rexMatching', 'rexSearch', 'rexFindAll',
            'str2Json', 'json2Str',
@@ -78,6 +78,13 @@ def splitPath(path, level=1):
         result = os.path.split(result[0])
         curIdx += 1
     return result
+
+
+def absPath(path):
+    if path is None:
+        return
+
+    return os.path.abspath(path)
 
 
 def createdir(directory):
@@ -201,9 +208,9 @@ def readfile(file, encoding='utf-8'):
         logger.warning('%s: %s' % (e, file))
 
 
-def writefile(file, string, encoding='utf-8'):
+def writefile(file, string, mode='w', encoding='utf-8'):
     try:
-        with open(file, 'w', encoding=encoding) as f:
+        with open(file, mode, encoding=encoding) as f:
             f.write(string)
     except Exception as e:
         logger.warning('%s: %s' % (e, file))
@@ -238,6 +245,19 @@ def firstxpath(content, xpath):
         return elements[0]
     else:
         return None
+
+
+def encodeData(string, encoding='utf-8'):
+    data = None
+    if string is None:
+        return data
+
+    try:
+        data = bytes(string, encoding)
+    except Exception as e:
+        raise e
+
+    return data
 
 
 def decodeData(data, encoding='utf-8'):
@@ -345,22 +365,5 @@ def runMethod(target, array, begin, step, kw):
 
 if __name__ == '__main__':
 
-    resultSet = set()
-
-    def foo(arr, idx, args):
-        print(args)
-        resultSet.add(arr[idx])
-
-    def foo2(idx, args):
-        print(idx, args)
-        if idx < 9:
-            return True
-        else:
-            return False
-
-    arr = list(range(10))
-    s = set(arr)
-    # multiRun(foo, arr, 2, 'Start...', 'Finish...', arg1='arg1v')
-    multiRun(foo2, None, 2, 'Start...', 'Finish...', args='arg1v')
-
+    print(encodeData('aaa', encoding='utf-8'))
     pass

@@ -8,10 +8,13 @@ import tempfile
 import hashlib
 import http.cookiejar
 import urllib.request
+import ssl
 sys.path.insert(0, '..')
 from utility.common import *
 from utility.logger import *
 from utility.proxy import *
+from utility.gzip_util import *
+
 
 __author__ = 'Lin Xiaobin'
 
@@ -44,7 +47,7 @@ class PyInterfacer(object):
                 break
 
         s = None
-        if response:
+        if response is not None:
             if encoding:
                 s = decodeData(response, encoding=encoding)
             else:
@@ -78,6 +81,11 @@ class PyInterfacer(object):
         try:
             with self.opener.open(req, timeout=30) as f:
                 response = f.read()
+
+                headers = f.info()
+                encoding = headers.get('Content-Encoding')
+                if encoding is not None and encoding == 'gzip' and isinstance(response, bytes):
+                    response = gzip_uncompress(response)
         except Exception as e:
             logger.warning('request error: %s, %s' % (e, url))
             if randProxy and proxy:
@@ -107,26 +115,17 @@ class PyInterfacer(object):
 
         hcj = urllib.request.HTTPCookieProcessor(self.cookiejar)
 
-        args = [hcj]
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        context = urllib.request.HTTPSHandler(context=ctx)
+
+        args = [hcj, context]
         if proxy:
             args.append(urllib.request.ProxyHandler(proxy))
 
         opener = urllib.request.build_opener(*args)
         self.opener = opener
-
-    def initialCookie(self):
-        path = self.cookiePath()
-        if self.cookiejar is None and path is not None:
-            logger.info('initialCookie: ' + path)
-            cj = http.cookiejar.MozillaCookieJar()
-            self.cookiejar = cj
-            if os.path.isfile(path):
-                cj.load(path)
-
-            hcj = urllib.request.HTTPCookieProcessor(cj)
-            opener = urllib.request.build_opener(hcj)
-            self.opener = opener
-            # urllib.request.install_opener(opener)
 
     def revertCookie(self):
         path = self.cookiePath()
@@ -166,20 +165,17 @@ cleanTempDirectory(tempfile.gettempdir(), interval=7 * 24 * 60 * 60)
 
 
 if __name__ == '__main__':
-    i1 = PyInterfacer('cookie1')
-    # url = 'http://httpbin.org/ip'
-    url = 'http://www.piggif.com/category/'
-    data = requestData(url, randProxy=True)
-    print(data)
+    # i1 = PyInterfacer('cookie1')
     # i1.requestData('https://github.com')
     # i1.saveCookie()
 
     # i2 = PyInterfacer('cookie2')
-    # i2.requestData('http://www.baidu.com')
+    # i2.requestData('https://www.baidu.com')
     # i2.saveCookie()
 
-    # i3 = PyInterfacer()
-    # i3.requestData('http://www.baidu.com')
-    # i3.saveCookie()
+    i3 = PyInterfacer()
+    s = i3.requestString('https://giphy.com/page/2?next=2017-05-02%2015%3A30%3A01&amp%3Bis=1&is=1&json=true')
+    # print(s)
+    i3.saveCookie()
 
     pass

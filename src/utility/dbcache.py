@@ -49,7 +49,7 @@ class DBCache(object, metaclass=Singleton):
 
         cmd = 'ALTER TABLE %s ADD COLUMN %s %s' % (table, column, columntype)
         self._updateSQL(cmd, commit=False)
-        if default:
+        if default is not None:
             cmd = 'update %s set %s=%s where %s is null' % (table, column, default, column)
             # print(cmd)
             self._updateSQL(cmd, commit=False)
