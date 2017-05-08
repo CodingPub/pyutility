@@ -17,7 +17,7 @@ __author__ = 'Lin Xiaobin'
 
 __all__ = ['isDebug', 'setDebug',
            'addsyspath',
-           'cmddir', 'joinPaths', 'splitPath', 'absPath',
+           'cmddir', 'joinPaths', 'splitPath', 'absPath', 'fileExtension',
            'createdir', 'createdirs', 'remove',
            'isfile', 'isdir',
            'listdir',
@@ -85,6 +85,16 @@ def absPath(path):
         return
 
     return os.path.abspath(path)
+
+
+def fileExtension(path):
+    if path is None:
+        return
+
+    arr = os.path.splitext(path)
+    if arr and len(arr) >= 1:
+        return arr[1]
+    return arr
 
 
 def createdir(directory):
