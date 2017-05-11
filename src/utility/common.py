@@ -17,7 +17,7 @@ __author__ = 'Lin Xiaobin'
 
 __all__ = ['isDebug', 'setDebug',
            'addsyspath',
-           'cmddir', 'joinPaths', 'splitPath', 'absPath', 'fileExtension',
+           'cmddir', 'joinPaths', 'splitPath', 'absPath', 'filedir', 'filename', 'fileExtension',
            'createdir', 'createdirs', 'remove',
            'isfile', 'isdir',
            'listdir',
@@ -85,6 +85,22 @@ def absPath(path):
         return
 
     return os.path.abspath(path)
+
+
+def filedir(path):
+    arr = splitPath(absPath(path), level=1)
+    if arr and len(arr) >= 1:
+        return arr[0]
+    return None
+
+
+def filename(path):
+    arr = splitPath(path, level=1)
+    if arr and len(arr) >= 1:
+        arr = os.path.splitext(arr[1])
+        if arr and len(arr) >= 1:
+            return arr[0]
+    return None
 
 
 def fileExtension(path):
@@ -375,5 +391,9 @@ def runMethod(target, array, begin, step, kw):
 
 if __name__ == '__main__':
 
-    print(encodeData('aaa', encoding='utf-8'))
+    print(filename('aaa.txt'))
+    print(filename('/tmp/aaa.txt'))
+    print(filedir('aaa.txt'))
+    print(filedir('/tmp/aaa.txt'))
+
     pass
