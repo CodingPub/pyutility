@@ -8,6 +8,7 @@ import json
 import threading
 import re
 import time
+import hashlib
 sys.path.insert(0, '..')
 from utility.logger import *
 from lxml import etree
@@ -27,6 +28,7 @@ __all__ = ['isDebug', 'setDebug',
            'htmlElements', 'firstxpath',
            'rexMatching', 'rexSearch', 'rexFindAll',
            'str2Json', 'json2Str',
+           'md5',
            'jsonArr2ItemArr',
            'systemCmd',
            'multiRun']
@@ -318,6 +320,13 @@ def json2Str(jsonStr):
                 logger.debug('json2Str:%s' % e)
 
     return result
+
+
+def md5(string):
+    if string is None:
+        return None
+
+    return hashlib.md5(string.encode('utf-8')).hexdigest()
 
 
 def jsonArr2ItemArr(jsonArr, selector):
