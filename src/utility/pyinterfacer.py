@@ -87,7 +87,7 @@ class PyInterfacer(object):
                 if encoding is not None and encoding == 'gzip' and isinstance(response, bytes):
                     response = gzip_uncompress(response)
         except Exception as e:
-            logger.warning('request error: %s, %s' % (e, url))
+            logger.debug('request error: %s, %s' % (e, url))
             if randProxy and proxy:
                 # print('check proxy:', proxy)
                 ProxyPool().vertifyProxy(proxy, times=1)
