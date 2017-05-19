@@ -107,7 +107,7 @@ class PyInterfacer(object):
     def rebuildOpener(self, proxy=None):
         path = self.cookiePath()
         if self.cookiejar is None and path is not None:
-            logger.info('initialCookie: ' + path)
+            logger.debug('initialCookie: ' + path)
             cj = http.cookiejar.MozillaCookieJar()
             self.cookiejar = cj
             if os.path.isfile(path):
