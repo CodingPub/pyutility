@@ -18,6 +18,10 @@ cat install.txt | xargs rm -rf
 * [lxml](https://pypi.python.org/pypi/lxml/3.4.4)
 * requests
 
+### image_uril
+
+* Pillow
+
 ### vcode
 
 * [pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
