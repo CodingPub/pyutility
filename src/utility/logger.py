@@ -6,8 +6,9 @@ import logging.config
 import logging.handlers
 import sys
 import os
+import shutil
 
-__all__ = ['logger']
+__all__ = ['logger', 'close_file_log']
 
 dirRoot = os.path.split(sys.argv[0])[0]
 
@@ -34,7 +35,15 @@ fileshandle.setFormatter(formatter)
 logger.addHandler(fileshandle)
 
 
+def close_file_log():
+    logger.removeHandler(fileshandle)
+    if os.path.isdir(dirLog):
+        shutil.rmtree(dirLog)
+
+
 if __name__ == '__main__':
+    # close_file_log()
+
     for x in range(1, 5):
         logger.debug('debug')
         logger.info('info')
