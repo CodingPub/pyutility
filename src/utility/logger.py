@@ -27,7 +27,8 @@ logging.basicConfig(level=logging.DEBUG,
 logger = logging.getLogger(name='main')
 
 # 每天创建一个日志文件，保留最近10个日志文件
-fileshandle = logging.handlers.TimedRotatingFileHandler(filename, when='midnight', interval=1, backupCount=10)
+fileshandle = logging.handlers.TimedRotatingFileHandler(
+    filename, when='midnight', interval=1, backupCount=10)
 fileshandle.suffix = "%Y%m%d.txt"
 fileshandle.setLevel(logging.INFO)
 formatter = logging.Formatter(fmt_str)

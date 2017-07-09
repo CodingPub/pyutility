@@ -14,6 +14,7 @@ __all__ = ['Package']
 
 class Package(object):
     """docstring for Package"""
+
     def __init__(self, files, distdir):
         super(Package, self).__init__()
         self.files = files
@@ -30,7 +31,8 @@ class Package(object):
 
     def buildPys(self):
         for path in self.files:
-            f1 = os.path.splitext(joinPaths(self.distdir, splitPath(path)[-1]))[0]
+            f1 = os.path.splitext(
+                joinPaths(self.distdir, splitPath(path)[-1]))[0]
             f2 = f1 + '.exe'
             remove(f1)
             remove(f2)
@@ -45,7 +47,9 @@ class Package(object):
             remove(joinPaths(directory, '__pycache__'))
             remove(joinPaths(directory, 'build'))
 
-            specs = [x for x in os.listdir(directory) if os.path.isfile(x) and os.path.splitext(x)[1] == '.spec']
+            specs = [x for x in os.listdir(directory)
+                     if os.path.isfile(x)
+                     and os.path.splitext(x)[1] == '.spec']
             for x in specs:
                 path = joinPaths(directory, x)
                 remove(path)
