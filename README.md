@@ -17,6 +17,7 @@ cat install.txt | xargs rm -rf
 
 * [lxml](https://pypi.python.org/pypi/lxml/3.4.4)
 * requests
+* pyinstaller
 
 ### image_uril
 
