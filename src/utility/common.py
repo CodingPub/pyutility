@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import sys
-import shutil
-import json
-import threading
-import re
-import time
 import hashlib
-sys.path.insert(0, '..')
-from utility.logger import *
-from lxml import etree
+import json
+import os
+import re
+import shutil
+import sys
+import threading
+import time
 
+from lxml import etree
+from utility.logger import logger
+
+sys.path.insert(0, '..')
 
 __author__ = 'Lin Xiaobin'
 
@@ -38,15 +39,18 @@ DEBUG = False
 
 
 def isDebug():
+    ''' 是否调试模式 '''
     return DEBUG
 
 
 def setDebug(debug):
+    ''' 修改调试模式 '''
     global DEBUG
     DEBUG = debug
 
 
 def addsyspath(path):
+    ''' 添加系统扫描路径 '''
     if os.path.isdir(path):
         sys.path.insert(0, path)
     elif path:
@@ -54,12 +58,14 @@ def addsyspath(path):
 
 
 def cmddir():
+    ''' 获取 python 文件的当前目录 '''
     path = os.path.abspath(sys.argv[0])
     path = os.path.split(path)[0]
     return path
 
 
 def joinPaths(*paths):
+    ''' 拼接路径 '''
     if paths is None or len(paths) == 0:
         return None
 
@@ -71,6 +77,7 @@ def joinPaths(*paths):
 
 
 def splitPath(path, level=1):
+    ''' 拆分路径，level 表示拆分的次数，返回最后一次的目录和文件名 '''
     if path is None or level <= 0:
         return path
 
@@ -83,6 +90,7 @@ def splitPath(path, level=1):
 
 
 def absPath(path):
+    ''' 获取绝对路径 '''
     if path is None:
         return
 
@@ -90,6 +98,7 @@ def absPath(path):
 
 
 def filedir(path):
+    ''' 获取文件所在目录 '''
     arr = splitPath(absPath(path), level=1)
     if arr and len(arr) >= 1:
         return arr[0]
@@ -97,6 +106,7 @@ def filedir(path):
 
 
 def filename(path):
+    ''' 获取文件名，不包含文件扩展名 '''
     arr = splitPath(path, level=1)
     if arr and len(arr) >= 1:
         arr = os.path.splitext(arr[1])
@@ -106,6 +116,7 @@ def filename(path):
 
 
 def fileExtension(path):
+    ''' 获取文件扩展名 '''
     if path is None:
         return
 
@@ -116,17 +127,20 @@ def fileExtension(path):
 
 
 def createdir(directory):
+    ''' 创建目录 '''
     if not os.path.isdir(directory):
         os.makedirs(directory)
 
 
 def createdirs(dirs):
+    ''' 批量创建目录 '''
     if dirs and len(dirs) > 0:
         for d in dirs:
             createdir(d)
 
 
 def remove(path):
+    ''' 删除文件或目录 '''
     try:
         if os.path.isdir(path):
             shutil.rmtree(path)
@@ -138,18 +152,21 @@ def remove(path):
 
 
 def isfile(path):
+    ''' 判断路径是否存在文件 '''
     if path:
         return os.path.isfile(path)
     return False
 
 
 def isdir(path):
+    ''' 判断是否存在目录 '''
     if path:
         return os.path.isdir(path)
     return False
 
 
 def rexMatching(pattern, string, flags=0):
+    ''' 正则表达式匹配 '''
     result = None
     if string and pattern:
         try:
@@ -161,6 +178,7 @@ def rexMatching(pattern, string, flags=0):
 
 
 def rexSearch(pattern, string, flags=0):
+    ''' 正则表达式匹配 '''
     result = None
     if string and pattern:
         try:
@@ -172,6 +190,7 @@ def rexSearch(pattern, string, flags=0):
 
 
 def rexFindAll(pattern, string, flags=0):
+    ''' 正则匹配所有 '''
     result = None
     if string and pattern:
         try:
@@ -183,6 +202,16 @@ def rexFindAll(pattern, string, flags=0):
 
 
 def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False):
+    '''
+    扫描目录
+
+    Attributes:
+        directory 扫描目录
+        nameRex 文件名正则
+        extRex 扩展名正则
+        justFile 只查找文件
+        justDir 只查找文件夹
+    '''
     result = []
     if directory and os.path.isdir(directory):
         files = os.listdir(directory)
@@ -211,15 +240,18 @@ def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False)
 
 
 def cleanTempDirectory(directory, interval=7 * 24 * 60 * 60, sync=False):
+    ''' 清理缓存目录 '''
     if sync:
         _cleanTempDirectory(directory, interval)
     else:
-        t = threading.Thread(target=_cleanTempDirectory, args=(directory, interval))
+        t = threading.Thread(target=_cleanTempDirectory,
+                             args=(directory, interval))
         t.start()
 
 
 def _cleanTempDirectory(directory, interval):
-    array = listdir(directory, nameRex=None, extRex=None, justFile=True, justDir=False)
+    array = listdir(directory, nameRex=None, extRex=None,
+                    justFile=True, justDir=False)
     for x in array:
         path = joinPaths(directory, x)
         ctime = os.path.getmtime(path)
@@ -229,6 +261,7 @@ def _cleanTempDirectory(directory, interval):
 
 
 def readfile(file, encoding='utf-8'):
+    ''' 读文件，返回字符串 '''
     try:
         with open(file, 'r', encoding=encoding) as f:
             return f.read()
@@ -237,6 +270,7 @@ def readfile(file, encoding='utf-8'):
 
 
 def writefile(file, string, mode='w', encoding='utf-8'):
+    ''' 写文件，写入字符串 '''
     try:
         with open(file, mode, encoding=encoding) as f:
             f.write(string)
@@ -245,6 +279,7 @@ def writefile(file, string, mode='w', encoding='utf-8'):
 
 
 def replacefile(src, dst):
+    ''' 替换文件 '''
     if os.path.isdir(src):
         remove(dst)
         shutil.copytree(src, dst)
@@ -254,6 +289,7 @@ def replacefile(src, dst):
 
 
 def htmlElements(content, xpath):
+    ''' 从字符串中提取 xpath 元素列表 '''
     if content is None or xpath is None:
         return None
 
@@ -268,6 +304,7 @@ def htmlElements(content, xpath):
 
 
 def firstxpath(content, xpath):
+    ''' 从字符串中提取第一个 xpath 元素 '''
     elements = htmlElements(content, xpath)
     if elements and len(elements) > 0:
         return elements[0]
@@ -276,6 +313,7 @@ def firstxpath(content, xpath):
 
 
 def encodeData(string, encoding='utf-8'):
+    ''' 字符串编码 '''
     data = None
     if string is None:
         return data
@@ -289,6 +327,7 @@ def encodeData(string, encoding='utf-8'):
 
 
 def decodeData(data, encoding='utf-8'):
+    ''' 字符串解码 '''
     s = None
     if data:
         try:
@@ -299,6 +338,7 @@ def decodeData(data, encoding='utf-8'):
 
 
 def str2Json(string):
+    ''' 字符串转 json '''
     result = None
     if string:
         try:
@@ -311,6 +351,7 @@ def str2Json(string):
 
 
 def json2Str(jsonStr):
+    ''' json 转字符串 '''
     result = None
     if jsonStr:
         try:
@@ -323,6 +364,7 @@ def json2Str(jsonStr):
 
 
 def md5(string):
+    ''' 计算字符串 md5 值 '''
     if string is None:
         return None
 
@@ -330,6 +372,7 @@ def md5(string):
 
 
 def jsonArr2ItemArr(jsonArr, selector):
+    ''' json list 批量转换 '''
     result = []
     if jsonArr and len(jsonArr) > 0:
         for x in jsonArr:
@@ -343,6 +386,7 @@ _cmdlock = threading.Lock()
 
 
 def systemCmd(cmd, directory=None, log=False):
+    ''' 执行命令行方法 '''
     _cmdlock.acquire()
 
     if directory is not None:
@@ -364,6 +408,7 @@ def systemCmd(cmd, directory=None, log=False):
 
 
 def multiRun(target, array, threadCount, beginMsg, finishMsg, args=None):
+    ''' 多线程运行 '''
     if beginMsg:
         logger.info(beginMsg)
     ts = []
@@ -372,7 +417,8 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg, args=None):
         threadCount = len(array)
 
     for idx in range(0, threadCount):
-        t = threading.Thread(target=runMethod, args=[target, array, idx, threadCount, args])
+        t = threading.Thread(target=runMethod, args=[
+                             target, array, idx, threadCount, args])
         t.setDaemon(True)
         t.start()
         ts.append(t)
