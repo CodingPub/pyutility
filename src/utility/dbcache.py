@@ -93,8 +93,8 @@ class DBCache(object, metaclass=Singleton):
 
         if isQueury:
             return values
-        else:
-            return rowCount
+
+        return rowCount
 
 
 if __name__ == '__main__':

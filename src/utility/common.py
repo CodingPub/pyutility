@@ -1,3 +1,7 @@
+'''
+common.py 提供了一些常用方法
+'''
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -66,7 +70,7 @@ def cmddir():
 
 def joinPaths(*paths):
     ''' 拼接路径 '''
-    if paths is None or len(paths) == 0:
+    if not paths:
         return None
 
     r = paths[0]
@@ -134,7 +138,7 @@ def createdir(directory):
 
 def createdirs(dirs):
     ''' 批量创建目录 '''
-    if dirs and len(dirs) > 0:
+    if dirs:
         for d in dirs:
             createdir(d)
 
@@ -172,7 +176,7 @@ def rexMatching(pattern, string, flags=0):
         try:
             result = re.match(pattern, string, flags=flags)
         except Exception as e:
-            logger.debug('something error: %s' % e)
+            logger.debug('something error: %s', e)
 
     return result
 
@@ -184,7 +188,7 @@ def rexSearch(pattern, string, flags=0):
         try:
             result = re.search(pattern, string, flags=flags)
         except Exception as e:
-            logger.debug('something error: %s' % e)
+            logger.debug('something error: %s', e)
 
     return result
 
@@ -196,7 +200,7 @@ def rexFindAll(pattern, string, flags=0):
         try:
             result = re.findall(pattern, string, flags=flags)
         except Exception as e:
-            logger.debug('something error: %s' % e)
+            logger.debug('something error: %s', e)
 
     return result
 
@@ -216,13 +220,13 @@ def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False)
     if directory and os.path.isdir(directory):
         files = os.listdir(directory)
 
-        for file in files:
-            name, ext = os.path.splitext(file)
-            absPath = os.path.abspath(joinPaths(directory, file))
-            isdir = os.path.isdir(absPath)
-            if justFile and isdir:
+        for aFile in files:
+            name, ext = os.path.splitext(aFile)
+            abs_path = os.path.abspath(joinPaths(directory, aFile))
+            is_dir = os.path.isdir(abs_path)
+            if justFile and is_dir:
                 continue
-            if justDir and not isdir:
+            if justDir and not is_dir:
                 continue
 
             add = True
@@ -234,7 +238,7 @@ def listdir(directory, nameRex=None, extRex=None, justFile=False, justDir=False)
                 add = rexMatching(extRex, ext)
 
             if add:
-                result.append(file)
+                result.append(aFile)
 
     return result
 
@@ -260,22 +264,22 @@ def _cleanTempDirectory(directory, interval):
             remove(path)
 
 
-def readfile(file, encoding='utf-8'):
+def readfile(file_path, encoding='utf-8'):
     ''' 读文件，返回字符串 '''
     try:
-        with open(file, 'r', encoding=encoding) as f:
+        with open(file_path, 'r', encoding=encoding) as f:
             return f.read()
     except Exception as e:
-        logger.warning('%s: %s' % (e, file))
+        logger.warning('%s: %s', e, file_path)
 
 
-def writefile(file, string, mode='w', encoding='utf-8'):
+def writefile(file_path, string, mode='w', encoding='utf-8'):
     ''' 写文件，写入字符串 '''
     try:
-        with open(file, mode, encoding=encoding) as f:
+        with open(file_path, mode, encoding=encoding) as f:
             f.write(string)
     except Exception as e:
-        logger.warning('%s: %s' % (e, file))
+        logger.warning('%s: %s', e, file_path)
 
 
 def replacefile(src, dst):
@@ -306,10 +310,10 @@ def htmlElements(content, xpath):
 def firstxpath(content, xpath):
     ''' 从字符串中提取第一个 xpath 元素 '''
     elements = htmlElements(content, xpath)
-    if elements and len(elements) > 0:
+    if elements:
         return elements[0]
-    else:
-        return None
+
+    return None
 
 
 def encodeData(string, encoding='utf-8'):
@@ -345,7 +349,7 @@ def str2Json(string):
             result = json.loads(string)
         except Exception as e:
             if isDebug():
-                logger.debug('str2Json:%s' % e)
+                logger.debug('str2Json:%s', e)
 
     return result
 
@@ -358,7 +362,7 @@ def json2Str(jsonStr):
             result = json.dumps(jsonStr, ensure_ascii=False, indent=2)
         except Exception as e:
             if isDebug():
-                logger.debug('json2Str:%s' % e)
+                logger.debug('json2Str:%s', e)
 
     return result
 
@@ -374,7 +378,7 @@ def md5(string):
 def jsonArr2ItemArr(jsonArr, selector):
     ''' json list 批量转换 '''
     result = []
-    if jsonArr and len(jsonArr) > 0:
+    if jsonArr:
         for x in jsonArr:
             w = selector(x)
             if w:
@@ -417,8 +421,8 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg, args=None):
         threadCount = len(array)
 
     for idx in range(0, threadCount):
-        t = threading.Thread(target=runMethod, args=[
-                             target, array, idx, threadCount, args])
+        t = threading.Thread(target=_runMethod,
+                             args=[target, array, idx, threadCount, args])
         t.setDaemon(True)
         t.start()
         ts.append(t)
@@ -429,7 +433,7 @@ def multiRun(target, array, threadCount, beginMsg, finishMsg, args=None):
         logger.info(finishMsg)
 
 
-def runMethod(target, array, begin, step, kw):
+def _runMethod(target, array, begin, step, kw):
     curIdx = begin
 
     if array is None:
@@ -445,10 +449,8 @@ def runMethod(target, array, begin, step, kw):
 
 
 if __name__ == '__main__':
-
-    print(filename('aaa.txt'))
-    print(filename('/tmp/aaa.txt'))
-    print(filedir('aaa.txt'))
-    print(filedir('/tmp/aaa.txt'))
-
-    pass
+    l = ''
+    if l:
+        print('true')
+    else:
+        print('false')

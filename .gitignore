@@ -8,3 +8,4 @@ install.txt
 src/utility/build/
 *.spec
 tags
+.vscode
