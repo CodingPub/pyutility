@@ -1,29 +1,28 @@
-## install
+# install
 
-```
+``` shell
 python setup.py install --record install.txt
 ```
 
-## uninstall
+# uninstall
 
-```
+``` shell
 cat install.txt | xargs rm -rf
 ```
 
+# dependent
 
-## dependent
-
-### common
+## common
 
 * [lxml](https://pypi.python.org/pypi/lxml/3.4.4)
 * requests
 * pyinstaller
 
-### image_uril
+## image_uril
 
 * Pillow
 
-### vcode
+## vcode
 
 * [pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
 * [tesseract](https://github.com/tesseract-ocr/tesseract/wiki)
