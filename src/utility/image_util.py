@@ -1,29 +1,36 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
 from PIL import Image
-from utility.common import *
+
+sys.path.insert(0, '.')
+from utility.common import Common
 
 __author__ = 'Lin Xiaobin'
 
-__all__ = ['scaleImageWdith']
+__all__ = ['scale_image']
 
 
-def scaleImageWdith(srcPath, dstPath, newWidth):
-    if not isfile(srcPath):
+def scale_image(src, dst, newWidth):
+    if not Common.isfile(src):
         return
 
-    remove(dstPath)
+    Common.remove(dst)
 
-    img = Image.open(srcPath)
+    img = Image.open(src)
     size = img.size
     print(size)
 
     newHeight = newWidth * size[1] / size[0]
-    img.resize((newWidth, int(newHeight)), Image.ANTIALIAS).save(dstPath)
+    img.resize((newWidth, int(newHeight)), Image.ANTIALIAS).save(dst)
+
+
+def main():
+    src_path = '/Users/linxiaobin/Developer/python/KeyboardThemeTool/exports/black/smock/preview.png'
+    dst_path = '/Users/linxiaobin/Developer/python/KeyboardThemeTool/exports/black/smock/thumbnail.png'
+    scale_image(src_path, dst_path, 480)
 
 
 if __name__ == '__main__':
-    srcPath = '/Users/linxiaobin/Developer/python/KeyboardThemeTool/exports/black/smock/preview.png'
-    dstPath = '/Users/linxiaobin/Developer/python/KeyboardThemeTool/exports/black/smock/thumbnail.png'
-    scaleImageWdith(srcPath, dstPath, 480)
+    main()

@@ -6,15 +6,14 @@ import os
 path = os.path.join(os.path.dirname(__file__), 'src')
 # path = os.path.join(path, 'utility')
 sys.path.insert(0, path)
+from utility.common import Common
 
 
-from utility.common import *
-
-
-directory = cmddir()
+directory = Common.get_cmd_dir()
 
 # cmd = 'git pull --all'
 # systemCmd(cmd, directory=directory)
 
 cmd = 'python setup.py install --record install.txt'
-systemCmd(cmd, directory=directory)
+
+Common.system_cmd(cmd, directory=directory)

@@ -26,10 +26,10 @@ def gzip_uncompress(c_data):
     buf = BytesIO(c_data)
     f = gzip.GzipFile(mode='rb', fileobj=buf)
     try:
-        r_data = f.read()
+        rdata = f.read()
     finally:
         f.close()
-    return r_data
+    return rdata
 
 
 def compress_file(fn_in, fn_out):
@@ -51,10 +51,9 @@ def uncompress_file(fn_in, fn_out):
 
 if __name__ == '__main__':
     in_data = bytes('hello, world!', 'utf-8')
-    print (in_data)
+    print(in_data)
     out_data = gzip_compress(in_data)
-    print (binascii.hexlify(out_data))
+    print(binascii.hexlify(out_data))
 
     r_data = gzip_uncompress(out_data)
-    print (r_data)
-
+    print(r_data)

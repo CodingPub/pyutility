@@ -7,14 +7,16 @@ import re
 import sqlite3
 import threading
 sys.path.insert(0, '..')
-from utility import *
+from utility.singleton import Singleton
+from utility.common import Common
+from utility.log import Log
 
 __author__ = 'Lin Xiaobin'
 
-__all__ = ['DBCache']
+__all__ = ['BaseDBCache']
 
 
-class DBCache(object, metaclass=Singleton):
+class BaseDBCache(object, metaclass=Singleton):
 
     def __init__(self, dbPath):
         self._dbLock = threading.Lock()
@@ -23,7 +25,7 @@ class DBCache(object, metaclass=Singleton):
         self._connection = sqlite3.connect(self._dbPath, check_same_thread=False)
 
     def backup(self):
-        replacefile(self._dbPath, self._dbPath + '.bak')
+        Common.replace_file(self._dbPath, self._dbPath + '.bak')
 
     def commit(self):
         self._executeSQL(';', isQueury=False, commit=True)
@@ -31,10 +33,10 @@ class DBCache(object, metaclass=Singleton):
     def tableContainsColumn(self, table, column):
         if table and column:
             sql = self._querySQL('select sql from sqlite_master where type="table" and tbl_name="%s"' % (table))
-            if sql and len(sql) > 0:
+            if sql:
                 sql = sql[0][0]
                 regular = r',?\s+[\'"]?' + column + r'[\'"]?\s+'
-                r = rexSearch(regular, sql, flags=re.M)
+                r = Common.rex_search(regular, sql, flags=re.M)
                 if r is not None:
                     return True
 
@@ -62,9 +64,9 @@ class DBCache(object, metaclass=Singleton):
         if self._dbPath:
             directory = os.path.abspath(self._dbPath)
             directory = os.path.split(directory)[0]
-            createdir(directory)
+            Common.create_dir(directory)
         else:
-            logger.error('empty db path')
+            Log.error('empty db path')
 
     def _querySQL(self, cmd, commit=False):
         return self._executeSQL(cmd, isQueury=True, commit=commit)
@@ -85,7 +87,7 @@ class DBCache(object, metaclass=Singleton):
             if not isQueury and commit:
                 con.commit()
         except Exception as e:
-            print('db except: ', e)
+            Log.error('db except: ', e)
             # raise e
         finally:
             cursor.close()
