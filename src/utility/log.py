@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+"""
+通用日志管理类
+"""
+
 import logging
 import logging.config
 import logging.handlers
