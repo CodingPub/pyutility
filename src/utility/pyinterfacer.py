@@ -12,7 +12,7 @@ import ssl
 sys.path.insert(0, '..')
 from utility.common import Common
 from utility.log import Log
-from utility.gzip_util import gzip_uncompress
+from utility.gzip_util import GZip
 
 __author__ = 'Lin Xiaobin'
 
@@ -78,7 +78,7 @@ class PyInterfacer(object):
                 headers = f.info()
                 encoding = headers.get('Content-Encoding')
                 if encoding is not None and encoding == 'gzip' and isinstance(response, bytes):
-                    response = gzip_uncompress(response)
+                    response = GZip.uncompress(response)
         except Exception as e:
             Log.debug('request error: %s, %s' % (e, url))
 

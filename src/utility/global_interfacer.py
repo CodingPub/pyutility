@@ -17,22 +17,22 @@ class GlobalInterfacer(object, metaclass=Singleton):
         self.interfacer = PyInterfacer()
 
     @classmethod
-    def request_string(cls, url, headers=None, data=None, method=None, encoding=None, cache=None,  retryTimes=None):
-        GlobalInterfacer().interfacer.request_string(url,
-                                                     headers=headers,
-                                                     data=data,
-                                                     method=method,
-                                                     encoding=encoding,
-                                                     cache=cache,
-                                                     retryTimes=retryTimes)
+    def request_string(cls, url, headers=None, data=None, method=None, encoding=None, cache=None, retryTimes=None):
+        return GlobalInterfacer().interfacer.request_string(url,
+                                                            headers=headers,
+                                                            data=data,
+                                                            method=method,
+                                                            encoding=encoding,
+                                                            cache=cache,
+                                                            retryTimes=retryTimes)
 
     @classmethod
     def request_data(cls, url, headers=None, data=None, method=None, cache=False):
-        GlobalInterfacer().interfacer.request_data(url,
-                                                   headers=headers,
-                                                   data=data,
-                                                   method=method,
-                                                   cache=cache)
+        return GlobalInterfacer().interfacer.request_data(url,
+                                                          headers=headers,
+                                                          data=data,
+                                                          method=method,
+                                                          cache=cache)
 
     @classmethod
     def revert_cookie(cls):
@@ -44,7 +44,10 @@ class GlobalInterfacer(object, metaclass=Singleton):
 
 
 def main():
-    print(GlobalInterfacer().request_string('https://www.baidu.com/', cache=False))
+    url = 'https://www.baidu.com/'
+    # content = GlobalInterfacer().interfacer.request_string(url)
+    content = GlobalInterfacer.request_string(url)
+    print(content)
 
 
 if __name__ == '__main__':
