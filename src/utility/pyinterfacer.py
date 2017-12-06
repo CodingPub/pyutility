@@ -66,7 +66,6 @@ class PyInterfacer(object):
                 with open(cachePath, 'rb') as f:
                     return f.read()
 
-        response = None
         req = urllib.request.Request(url, data=data, headers=headers, origin_req_host=None, unverifiable=False, method=method)
         # 停止使用 Proxy
         # self.rebuildOpener(proxy={'http': proxy})
@@ -87,6 +86,18 @@ class PyInterfacer(object):
                 f.write(response)
 
         return response
+
+    def download_file(self, local_path, url, headers=None, data=None, method=None):
+        if not url or not local_path:
+            return
+
+        directory = Common.split_path(local_path)[0]
+        Common.create_dir(directory)
+        Common.remove(local_path)
+
+        content = self.request_data(url, headers=headers, data=data, method=method)
+        if content:
+            Common.write_data(local_path, content)
 
     def cookiePath(self):
         if self.cookiename:

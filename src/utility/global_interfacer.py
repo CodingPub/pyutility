@@ -35,6 +35,14 @@ class GlobalInterfacer(object, metaclass=Singleton):
                                                           cache=cache)
 
     @classmethod
+    def download_file(cls, local_path, url, headers=None, data=None, method=None):
+        return GlobalInterfacer().interfacer.download_file(local_path,
+                                                           url,
+                                                           headers=headers,
+                                                           data=data,
+                                                           method=method)
+
+    @classmethod
     def revert_cookie(cls):
         GlobalInterfacer().interfacer.revert_cookie()
 

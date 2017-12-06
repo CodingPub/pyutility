@@ -235,6 +235,14 @@ class Common(object, metaclass=Singleton):
             Log.warning('%s: %s' % (e, file))
 
     @classmethod
+    def write_data(cls, file, data):
+        try:
+            with open(file, 'wb') as f:
+                f.write(data)
+        except Exception as e:
+            Log.warning('%s: %s' % (e, file))
+
+    @classmethod
     def replace_file(cls, src, dst):
         if os.path.isdir(src):
             cls.remove(dst)
@@ -244,13 +252,14 @@ class Common(object, metaclass=Singleton):
             shutil.copyfile(src, dst)
 
     @classmethod
-    def html_elements(cls, content, xpath):
-        if content is None or xpath is None:
+    def html_elements(cls, content, xpath, tree=None):
+        if not content or not xpath:
             return None
 
         elements = []
         try:
-            tree = etree.HTML(content)
+            if tree is not None:
+                tree = etree.HTML(content)
             elements = tree.xpath(xpath)
         except Exception as e:
             print('xpath except: ', e)
@@ -258,8 +267,8 @@ class Common(object, metaclass=Singleton):
         return elements
 
     @classmethod
-    def first_xpath(cls, content, xpath):
-        elements = cls.html_elements(content, xpath)
+    def first_xpath(cls, content, xpath, tree=None):
+        elements = cls.html_elements(content, xpath, tree=tree)
         if elements:
             return elements[0]
         return None
