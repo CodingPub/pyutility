@@ -258,10 +258,11 @@ def _cleanTempDirectory(directory, interval):
                     justFile=True, justDir=False)
     for x in array:
         path = joinPaths(directory, x)
-        ctime = os.path.getmtime(path)
-        current = time.time()
-        if current - ctime >= interval:
-            remove(path)
+        if os.access(path, os.W_OK):
+            ctime = os.path.getmtime(path)
+            current = time.time()
+            if current - ctime >= interval:
+                remove(path)
 
 
 def readfile(file_path, encoding='utf-8'):

@@ -129,11 +129,11 @@ class PyInterfacer(object):
 
     def revertCookie(self):
         path = self.cookiePath()
-        if os.path.isfile(path):
+        if os.path.isfile(path) and self.cookiejar:
             self.cookiejar.revert(path)
 
     def saveCookie(self):
-        if self.cookiejar is not None:
+        if self.cookiejar:
             self.cookiejar.save(self.cookiePath())
 
 

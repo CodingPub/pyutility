@@ -8,13 +8,13 @@ path = os.path.join(os.path.dirname(__file__), 'src')
 sys.path.insert(0, path)
 
 
-from utility import *
+from utility.common import *
 
 
 directory = cmddir()
 
-cmd = 'git pull --all'
-systemCmd(cmd, directory=directory)
+# cmd = 'git pull --all'
+# systemCmd(cmd, directory=directory)
 
 cmd = 'python setup.py install --record install.txt'
 systemCmd(cmd, directory=directory)
