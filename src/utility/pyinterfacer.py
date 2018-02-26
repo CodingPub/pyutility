@@ -70,6 +70,7 @@ class PyInterfacer(object):
         # 停止使用 Proxy
         # self.rebuildOpener(proxy={'http': proxy})
         self.rebuildOpener(proxy=None)
+        response = None
         try:
             with self.opener.open(req, timeout=30) as f:
                 response = f.read()
