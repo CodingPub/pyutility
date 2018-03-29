@@ -1,29 +1,35 @@
 # install
 
-``` shell
-python setup.py install --record install.txt
-```
-
-# uninstall
+python 常用方法封装，新开发的爬虫建议使用 v1.1 分支中的版本，代码相对规范一些。
 
 ``` shell
-cat install.txt | xargs rm -rf
+python install.py
 ```
 
-# dependent
+# dependence
 
-## common
+使用 pip 安装依赖模块
+
+## common (必须)
 
 * [lxml](https://pypi.python.org/pypi/lxml/3.4.4)
 * requests
 * pyinstaller
 
-## image_uril
+## image_util (可选)
 
 * Pillow
 
-## vcode
+## vcode (可选)
 
-* [pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
+* [Pillow](https://pypi.python.org/pypi/Pillow/3.4.2)
 * [tesseract](https://github.com/tesseract-ocr/tesseract/wiki)
 * [pytesseract](https://pypi.python.org/pypi/pytesseract/0.1.6)
+
+# uninstall
+
+仅 Mac/Linux 可用
+
+``` shell
+cat install.txt | xargs rm -rf
+```
