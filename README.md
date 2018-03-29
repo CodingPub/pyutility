@@ -4,6 +4,8 @@ python 常用方法封装，新开发的爬虫建议使用 v1.1 分支中的版�
 
 # install
 
+下载源码，进入项目根目录，执行脚本：
+
 ``` shell
 python install.py
 ```
