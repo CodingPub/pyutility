@@ -1,6 +1,8 @@
-# install
+# pyutility
 
 python 常用方法封装，新开发的爬虫建议使用 v1.1 分支中的版本，代码相对规范一些。
+
+# install
 
 ``` shell
 python install.py
