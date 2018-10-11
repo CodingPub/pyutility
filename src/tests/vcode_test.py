@@ -1,21 +1,25 @@
-import addpath
 import unittest
 import os
 from PIL import Image
-from utility import *
+from utility import Common
 from utility.vcode import *
 
 
 def run(threshold):
-    files = [x for x in listdir('codes') if not x.startswith('.')]
+    dir_path = Common.join_paths(Common.get_cmd_dir(), 'codes')
+    files = [x for x in Common.list_dir(dir_path) if not x.startswith('.')]
     rightCount = 0
     for x in files:
-        # print(x)
-        im = Image.open(joinPaths('codes', x))
+        # print(x)+
+        img_path = Common.join_paths(dir_path, x)
+        print(img_path)
+        im = Image.open(img_path)
         box = (5, 5, 43, 19)
         text = vcode(im, box, threshold=threshold)
 
-        if text == os.path.splitext(x)[0]:
+        real = os.path.splitext(x)[0]
+        print("real: %s, cal: %s", real, text)
+        if text == real:
             rightCount += 1
     return rightCount
 
@@ -35,7 +39,9 @@ class TestVcode(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+
+    run(175)
 
     # m = 0
     # mt = 0
