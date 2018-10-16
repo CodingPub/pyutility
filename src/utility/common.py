@@ -262,11 +262,12 @@ class Common(object, metaclass=Singleton):
 
         elements = []
         try:
-            if tree is not None:
+            if tree is None:
                 tree = etree.HTML(content)
-            elements = tree.xpath(xpath)
+            if tree is not None:
+                elements = tree.xpath(xpath)
         except Exception as e:
-            print('xpath except: ', e)
+            Log.debug('xpath except: %s', e)
 
         return elements
 
@@ -297,7 +298,7 @@ class Common(object, metaclass=Singleton):
             try:
                 s = data.decode(encoding)
             except Exception as e:
-                print(e)
+                Log.debug(e)
         return s
 
     @classmethod
@@ -308,7 +309,7 @@ class Common(object, metaclass=Singleton):
                 result = json.loads(string)
             except Exception as e:
                 if cls.debug():
-                    Log.debug('str2json:%s' % e)
+                    Log.debug('str2json: %s' % e)
 
         return result
 
