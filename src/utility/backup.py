@@ -5,7 +5,7 @@ import datetime
 from utility.common import Common
 from utility.log import Log
 
-__all__ = ['backup']
+__all__ = ['backup', 'backup_with_config']
 
 
 def should_ignore_hours(ignore_hours):
