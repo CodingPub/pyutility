@@ -1,0 +1,9 @@
+[
+  {
+    "src": "~/develop/python/pyutility/src/tests/backup_test.json",
+    "dst_dir": "/tmp/backup",
+    "retemtion_days": [15, 10, 7, 3, 2, 1],
+    "hours_last_day": 24,
+    "ignore_hours": [1, 6]
+  }
+]
