@@ -87,7 +87,7 @@ class BaseDBCache(object, metaclass=Singleton):
             if not isQueury and commit:
                 con.commit()
         except Exception as e:
-            Log.error('db except: ', e)
+            Log.error('db except: %s' % e)
             # raise e
         finally:
             cursor.close()
@@ -100,4 +100,6 @@ class BaseDBCache(object, metaclass=Singleton):
 
 
 if __name__ == '__main__':
-    pass
+    path = '/Users/linxiaobin/develop/python/baidu-pet-chain-buyer/python/data/data.db'
+    db = BaseDBCache(path)
+    db.table_add_column('user_pets', 'auto_breed', 'boolean', default='false')

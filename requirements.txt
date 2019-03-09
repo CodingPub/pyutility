@@ -1,0 +1,6 @@
+lxml
+requests
+pyinstaller
+Pillow
+tesseract
+pytesseract
