@@ -11,3 +11,4 @@ from utility.pyinterfacer import PyInterfacer
 from utility.global_interfacer import GlobalInterfacer
 from utility.gzip_util import GZip
 from utility.image_util import ImageUtil
+from utility.mail_tool import MailTool
