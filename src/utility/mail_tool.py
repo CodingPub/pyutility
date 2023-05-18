@@ -34,12 +34,13 @@ class MailTool(object, metaclass=Singleton):
         self._mail_password = None
         self._server = None
 
-    def init(self, host, user, passowrd):
+    def init(self, host, user, passowrd, name):
         self._lock.acquire()
 
         self._mail_host = host
         self._mail_user = user
         self._mail_password = passowrd
+        self._mail_name = name
 
         self._lock.release()
         Log.debug('mail tool init')
@@ -128,7 +129,7 @@ class MailTool(object, metaclass=Singleton):
 
         sender = self._mail_user
         msg = MIMEText(content, 'plain', 'utf-8')
-        msg['From'] = self._format_addr('管理员 <%s>' % sender)
+        msg['From'] = self._format_addr('%s <%s>' % (self._mail_name, sender))
         msg['To'] = ', '.join(['%s <%s>' % (x, x) for x in receivers])
         msg['Subject'] = Header(title, 'utf-8').encode()
         self._server.sendmail(sender, receivers, msg.as_string())
@@ -176,10 +177,11 @@ if __name__ == "__main__":
     mail_host = "smtp.163.com"  # SMTP服务器
     mail_user = "helper1840@163.com"  # 用户名
     mail_pass = "wy112233"  # 授权密码，非登录密码
+    mail_name = "智能助手"  # 发件人标题
 
     receivers = ['lxb_0605@qq.com']
 
-    MailTool().init(mail_host, mail_user, mail_pass)
+    MailTool().init(mail_host, mail_user, mail_pass, mail_name)
 
     for x in range(1, 2):
         send_mail(receivers, '人生苦短%s' % x, '我用Python')
